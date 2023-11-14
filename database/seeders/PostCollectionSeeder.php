@@ -13,6 +13,6 @@ class PostCollectionSeeder extends Seeder
      */
     public function run()
     {
-        //
+        \App\Models\PostCollection::factory(10)->has(\App\Models\Post::factory()->count(10))->create();
     }
 }

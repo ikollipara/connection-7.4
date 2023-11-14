@@ -53,7 +53,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'bio' => 'array',
         'grades' => 'array',
-        'id' => 'string',
     ];
 
     /**
@@ -62,6 +61,22 @@ class User extends Authenticatable
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+
+    /**
+     * Get the user's post collections
+     */
+    public function postCollections()
+    {
+        return $this->hasMany(PostCollection::class);
+    }
+
+    /**
+     * Get the user's comments
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 
     /**

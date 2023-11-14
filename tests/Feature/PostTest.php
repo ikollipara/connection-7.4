@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -152,5 +153,26 @@ class PostTest extends TestCase
         $this->assertFalse($post->isLikedBy($user));
         $post->like($user);
         $this->assertTrue($post->isLikedBy($user));
+    }
+
+    /**
+     * Test that you can get a post by status
+     */
+    public function test_you_can_get_a_post_by_status()
+    {
+        $posts = Post::factory()
+            ->count(3)
+            ->state(new Sequence(
+                ['published' => true,],
+                ['published' => false,],
+                ['published' => true,],
+            ))
+            ->create();
+
+        $this->assertDatabaseCount('posts', 3);
+        $this->assertEquals(2, Post::query()->status('published')->count());
+        $this->assertEquals(1, Post::query()->status('draft')->count());
+        $posts[0]->delete();
+        $this->assertEquals(1, Post::query()->status('archived')->count());
     }
 }

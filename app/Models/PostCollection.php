@@ -67,6 +67,22 @@ class PostCollection extends Model
         return $this->belongsToMany(Post::class);
     }
 
+    /**
+     * Get all the post collections for the given status.
+     */
+    public function scopeStatus($query, $status)
+    {
+        if ($status == 'archived') {
+            return $query->onlyTrashed();
+        } elseif ($status == 'published') {
+            return $query->where('published', true);
+        } elseif ($status == 'draft') {
+            return $query->where('published', false);
+        } else {
+            return $query;
+        }
+    }
+
     public static function booted()
     {
         static::creating(function (PostCollection $postCollection) {
