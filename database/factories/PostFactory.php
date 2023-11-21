@@ -22,7 +22,7 @@ class PostFactory extends Factory
         return [
             'title' => $this->faker->word(),
             'body' => ['blocks' => []],
-            'metadata' => ['category' => $this->faker->randomElement(Category::cases()), 'audience' => $this->faker->randomElement(Audience::cases()), 'grades' => $this->faker->randomElements(Grade::cases()), 'categories' => $this->faker->randomElements(Standard::cases()), 'practices' => $this->faker->randomElements(Practice::cases())],
+            'metadata' => ['category' => $this->faker->randomElement(Category::cases()), 'audience' => $this->faker->randomElement(Audience::cases()), 'grades' => $this->faker->randomElements(Grade::cases()), 'standards' => $this->faker->randomElements(Standard::cases()), 'practices' => $this->faker->randomElements(Practice::cases())],
             'published' => $this->faker->boolean(),
             'user_id' => User::factory(),
         ];

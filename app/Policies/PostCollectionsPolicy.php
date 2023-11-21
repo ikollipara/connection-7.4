@@ -30,7 +30,7 @@ class PostCollectionsPolicy
      */
     public function view(User $user, PostCollection $postCollection)
     {
-        return $postCollection->user_id == $user->id or $postCollection->published == true;
+        return $postCollection->user_id == $user->id or $postCollection->published;
     }
 
     /**

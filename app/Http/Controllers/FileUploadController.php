@@ -19,7 +19,7 @@ class FileUploadController extends Controller
             return response()->json([
                 'success' => 1,
                 'file' => [
-                    'url' => Storage::url($path),
+                    'url' => $path,
                 ],
             ]);
         } else {

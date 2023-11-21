@@ -40,7 +40,17 @@ class PostTest extends TestCase
     {
         $post = Post::factory()->create(['published' => false]);
         $slug = $post->slug;
-        $post->title = $this->faker->word();
+
+        // Faker sometimes generates
+        // the same word. To avoid that
+        // issue, we just use a loop to generate
+        // a new word until it is not the same.
+        $new_word = $this->faker->word();
+        while ($new_word == $post->title) {
+            $new_word = $this->faker->word();
+        };
+        $post->title = $new_word;
+
         $post->save();
         $this->assertNotEquals($slug, $post->slug);
     }
@@ -174,5 +184,6 @@ class PostTest extends TestCase
         $this->assertEquals(1, Post::query()->status('draft')->count());
         $posts[0]->delete();
         $this->assertEquals(1, Post::query()->status('archived')->count());
+        $this->assertEquals(Post::query()->count(), Post::query()->status('')->count());
     }
 }

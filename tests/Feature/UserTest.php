@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Post;
+use App\Models\PostCollection;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -61,5 +63,42 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         $this->assertNotNull($user->id);
         $this->assertTrue(Str::isUuid($user->id));
+    }
+
+    /**
+     * Test that the user has posts
+     */
+    public function test_the_user_has_posts()
+    {
+        $user = User::factory()->create();
+        $this->assertEmpty($user->posts);
+        $post = Post::factory()->create(['user_id' => $user->id]);
+        $user->refresh();
+        $this->assertNotEmpty($user->posts);
+    }
+
+    /**
+     * test that the user has post collections
+     */
+    public function test_the_user_has_post_collections()
+    {
+        $user = User::factory()->create();
+        $this->assertEmpty($user->postCollections);
+        $postCollection = PostCollection::factory()->create(['user_id' => $user->id]);
+        $user->refresh();
+        $this->assertNotEmpty($user->postCollections);
+    }
+
+    /**
+     * Test that the user has comments
+     */
+    public function test_the_user_has_comments()
+    {
+        $user = User::factory()->create();
+        $this->assertEmpty($user->comments);
+        $post = Post::factory()->create(['user_id' => $user->id]);
+        $post->comments()->create(['body' => $this->faker->paragraphs(3, true), 'user_id' => $user->id]);
+        $user->refresh();
+        $this->assertNotEmpty($user->comments);
     }
 }

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Post;
 use App\Models\PostCollection;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -75,5 +76,27 @@ class PostCollectionTest extends TestCase
         $posts = Post::factory()->count(3)->create();
         $postCollection->posts()->attach($posts);
         $this->assertEquals($postCollection->posts()->count(), 3);
+    }
+
+    /**
+     * Test that you can get a post by status
+     */
+    public function test_you_can_get_a_post_by_status()
+    {
+        $post_collection = PostCollection::factory()
+            ->count(3)
+            ->state(new Sequence(
+                ['published' => true,],
+                ['published' => false,],
+                ['published' => true,],
+            ))
+            ->create();
+
+        $this->assertDatabaseCount('post_collections', 3);
+        $this->assertEquals(2, PostCollection::query()->status('published')->count());
+        $this->assertEquals(1, PostCollection::query()->status('draft')->count());
+        $post_collection[0]->delete();
+        $this->assertEquals(1, PostCollection::query()->status('archived')->count());
+        $this->assertEquals(PostCollection::query()->count(), PostCollection::query()->status('')->count());
     }
 }

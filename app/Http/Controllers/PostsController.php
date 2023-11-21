@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use PharIo\Manifest\Author;
 
 class PostsController extends Controller
 {
@@ -13,10 +15,10 @@ class PostsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($status)
+    public function index($status = 'draft')
     {
 
-        return view('posts.index', [
+        return Inertia::render('Posts/Index', [
             'posts' => $this
                 ->current_user()
                 ->posts()
@@ -33,7 +35,7 @@ class PostsController extends Controller
      */
     public function create()
     {
-        return view('posts.create');
+        return Inertia::render('Posts/Create');
     }
 
     /**
@@ -44,10 +46,11 @@ class PostsController extends Controller
      */
     public function store(PostRequest $request)
     {
+        $this->authorize('create', Post::class);
         $post = Post::create($request->validated());
 
-        redirect()
-            ->route('posts.edit', ['post' => $post])
+        return redirect()
+            ->route('posts.edit', ['post' => $post], 303)
             ->with('success', 'Post created successfully!');
     }
 
@@ -59,7 +62,8 @@ class PostsController extends Controller
      */
     public function show(Post $post)
     {
-        return view('posts.show', ['post' => $post]);
+        $this->authorize('view', $post);
+        return Inertia::render('Posts/Show', ['post' => $post->with('user'), 'likes' => $post->likes()]);
     }
 
     /**
@@ -70,7 +74,8 @@ class PostsController extends Controller
      */
     public function edit(Post $post)
     {
-        return view('posts.edit', ['post' => $post]);
+        $this->authorize('update', $post);
+        return Inertia::render('Posts/Edit', ['post' => $post]);
     }
 
     /**
@@ -82,8 +87,10 @@ class PostsController extends Controller
      */
     public function update(PostRequest $request, Post $post)
     {
+        $this->authorize('update', $post);
         $post->update($request->validated());
-        return back(303)
+        return redirect()
+            ->route('posts.edit', ['post' => $post], 303)
             ->with('success', 'Post updated successfully!');
     }
 
@@ -95,10 +102,24 @@ class PostsController extends Controller
      */
     public function destroy(Post $post)
     {
+        $this->authorize('delete', $post);
         if ($post->delete()) {
-            return redirect()->route('posts.index')->with('success', 'Post archived successfully!');
+            return redirect()->route('posts.index', [], 303)->with('success', 'Post archived successfully!');
         }
 
         return back()->with('error', 'Post could not be archived.');
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     */
+    public function restore(Post $post)
+    {
+        $this->authorize('restore', $post);
+        if ($post->restore()) {
+            return redirect()->route('posts.index')->with('success', 'Post restored successfully!');
+        }
+
+        return back()->with('error', 'Post could not be restored.');
     }
 }

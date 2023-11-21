@@ -6,44 +6,55 @@ use App\Http\Requests\CommentRequest;
 use App\Models\Comment;
 use App\Models\PostCollection;
 use App\Models\Post;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
+use InvalidArgumentException;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 class CommentsController extends Controller
 {
+
+    /**
+     * Resolve the item by slug.
+     * @param string $slug The slug of the item.
+     * @return Post|PostCollection The item.
+     * @throws InvalidArgumentException 
+     */
+    private function resolve_item_by_slug(string $slug)
+    {
+        return (Post::query()->where('slug', $slug)->first() ?? PostCollection::query()->where('slug', $slug)->first());
+    }
+
+    /**
+     * Resolve the redirect.
+     * @param Post|PostCollection $item The item.
+     * @return RedirectResponse The redirect formmated with the item.
+     * @throws BindingResolutionException 
+     * @throws RouteNotFoundException 
+     */
+    private function resolve_redirect($item)
+    {
+        if (get_class($item) == Post::class) {
+            return redirect()
+                ->route('posts.comments.index', ['post' => $item]);
+        } else {
+            return redirect()
+                ->route('collections.comments.index', ['post_collection' => $item]);
+        }
+    }
 
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(string $commentable_slug)
+    public function index($commentable_slug)
     {
-        $comments = Comment::whereMorphHas(
-            [Post::class, PostCollection::class],
-            function (Builder $query) use ($commentable_slug) {
-                $query->where('slug', $commentable_slug);
-            }
-        )->get();
-
-        return view('comments.index', [
-            'comments' => $comments,
-            'commentable' => $comments->first()->commentable,
-        ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(string $commentable_slug)
-    {
-        $commentable = Comment::whereMorphHas([Post::class, PostCollection::class], function (Builder $query) use ($commentable_slug) {
-            $query->where('slug', $commentable_slug);
-        })->first()->commentable;
-
-        return view('comments.create', [
-            'commentable' => $commentable,
+        $item = $this->resolve_item_by_slug($commentable_slug);
+        return Inertia::render('Comments/Index', [
+            'comments' => $item->comments,
+            'commentable' => $item,
         ]);
     }
 
@@ -56,30 +67,15 @@ class CommentsController extends Controller
      */
     public function store(string $commentable_slug, CommentRequest $request)
     {
-        Comment::create($request->validated() + [
-            'commentable_id' => Comment::whereMorphHas([Post::class, PostCollection::class], function (Builder $query) use ($commentable_slug) {
-                $query->where('slug', $commentable_slug);
-            })->first()->commentable->id,
-            'commentable_type' => get_class(Comment::whereMorphHas([Post::class, PostCollection::class], function (Builder $query) use ($commentable_slug) {
-                $query->where('slug', $commentable_slug);
-            })->first()->commentable),
-            'user_id' => auth()->user()->id,
-        ]);
-
-        return redirect()
-            ->route('comments.index', ['commentable_slug' => $commentable_slug])
+        $item = $this->resolve_item_by_slug($commentable_slug);
+        $item->comments()->create(
+            array_merge(
+                $request->validated(),
+                ['user_id' => $this->current_user()->id]
+            )
+        );
+        return $this->resolve_redirect($item)
             ->with('success', 'Comment created successfully!');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Comment  $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Comment $comment)
-    {
-        return view('comments.edit', ['comment' => $comment]);
     }
 
     /**
@@ -92,10 +88,11 @@ class CommentsController extends Controller
      */
     public function update(string $commentable_slug, CommentRequest $request, Comment $comment)
     {
+        $item = $this->resolve_item_by_slug($commentable_slug);
+        $this->authorize('update', $comment);
         $comment->update($request->validated());
 
-        return redirect()
-            ->route('comments.index', ['commentable_slug' => $commentable_slug])
+        return $this->resolve_redirect($item)
             ->with('success', 'Comment updated successfully!');
     }
 }

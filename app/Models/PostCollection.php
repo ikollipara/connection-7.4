@@ -86,12 +86,12 @@ class PostCollection extends Model
     public static function booted()
     {
         static::creating(function (PostCollection $postCollection) {
-            $postCollection->slug = Str::slug($postCollection->title);
+            $postCollection->slug = Str::slug("{$postCollection->title} {$postCollection->author_id} Collection");
         });
 
         static::updating(function (PostCollection $postCollection) {
             if (!$postCollection->published) {
-                $postCollection->slug = Str::slug($postCollection->title);
+                $postCollection->slug = Str::slug("{$postCollection->title} {$postCollection->author_id} Collection");
             }
         });
     }

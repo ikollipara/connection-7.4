@@ -80,12 +80,13 @@ class Post extends Model
     public static function booted()
     {
         static::creating(function (Post $post) {
-            $post->slug = Str::slug($post->title);
+            $post->slug = Str::slug("{$post->title} {$post->author_id} Post");
         });
 
         static::updating(function (Post $post) {
             if (!$post->published) {
-                $post->slug = Str::slug($post->title);
+                $post->slug =
+                    Str::slug("{$post->title} {$post->author_id} Post");
             }
         });
     }

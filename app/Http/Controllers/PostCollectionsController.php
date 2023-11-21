@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PostCollectionRequest;
 use App\Models\PostCollection;
+use Inertia\Inertia;
 
 class PostCollectionsController extends Controller
 {
@@ -12,12 +13,12 @@ class PostCollectionsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(string $status)
+    public function index(string $status = 'draft')
     {
-        return view('post_collections.index', [
-            'post_collections' => $this
+        return Inertia::render('PostCollections/Index', [
+            'collections' => $this
                 ->current_user()
-                ->post_collections()
+                ->postCollections()
                 ->status($status)
                 ->get(),
             'status' => $status,
@@ -31,7 +32,7 @@ class PostCollectionsController extends Controller
      */
     public function create()
     {
-        return view('post_collections.create');
+        return Inertia::render('PostCollections/Create');
     }
 
     /**
@@ -43,10 +44,9 @@ class PostCollectionsController extends Controller
     public function store(PostCollectionRequest $request)
     {
         $post_collection = PostCollection::create($request->validated());
-
-        redirect()
-            ->route('post_collections.edit', ['post_collection' => $post_collection])
-            ->with('success', 'PostCollection created successfully!');
+        return redirect()
+            ->route('collections.edit', ['post_collection' => $post_collection])
+            ->with('success', 'Collection created successfully!');
     }
 
     /**
@@ -57,8 +57,10 @@ class PostCollectionsController extends Controller
      */
     public function show(PostCollection $postCollection)
     {
-        return view('post_collections.show', [
-            'post_collection' => $postCollection,
+        $this->authorize('view', $postCollection);
+        return Inertia::render('PostCollections/Show', [
+            'collection' => $postCollection,
+            'likes' => $postCollection->likes(),
         ]);
     }
 
@@ -70,8 +72,9 @@ class PostCollectionsController extends Controller
      */
     public function edit(PostCollection $postCollection)
     {
-        return view('post_collections.edit', [
-            'post_collection' => $postCollection,
+        $this->authorize('update', $postCollection);
+        return Inertia('PostCollections/Edit', [
+            'collection' => $postCollection,
         ]);
     }
 
@@ -84,11 +87,12 @@ class PostCollectionsController extends Controller
      */
     public function update(PostCollectionRequest $request, PostCollection $postCollection)
     {
+        $this->authorize('update', $postCollection);
         $postCollection->update($request->validated());
 
-        redirect()
-            ->route('post_collections.edit', ['post_collection' => $postCollection])
-            ->with('success', 'PostCollection updated successfully!');
+        return redirect()
+            ->route('collections.edit', ['post_collection' => $postCollection])
+            ->with('success', 'Collection updated successfully!');
     }
 
     /**
@@ -99,13 +103,30 @@ class PostCollectionsController extends Controller
      */
     public function destroy(PostCollection $postCollection)
     {
+        $this->authorize('delete', $postCollection);
         if ($postCollection->delete()) {
             return redirect()
-                ->route('post_collections.index', ['status' => 'draft'])
-                ->with('success', 'PostCollection archived successfully!');
+                ->route('collections.index', ['status' => 'draft'])
+                ->with('success', 'Collection archived successfully!');
         } else {
             return back()
-                ->with('error', 'PostCollection could not be archived.');
+                ->with('error', 'Collection could not be archived.');
+        }
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     */
+    public function restore(PostCollection $postCollection)
+    {
+        $this->authorize('restore', $postCollection);
+        if ($postCollection->restore()) {
+            return redirect()
+                ->route('collections.index')
+                ->with('success', 'Collection restored successfully!');
+        } else {
+            return back()
+                ->with('error', 'Collection could not be restored.');
         }
     }
 }
