@@ -2,27 +2,27 @@
 
 namespace App\Models;
 
-use App\Traits\HasLikes;
 use App\Traits\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Contracts\HasLikes;
+use App\Events\CommentLiked;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasLikes as HasLikesTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Comment extends Model
+class Comment extends Model implements HasLikes
 {
-    use HasFactory, HasUuids, HasLikes;
+    use HasFactory, HasUuids, HasLikesTrait;
 
-    protected $likeTable = 'comment_likes';
-    protected $likeColumn = 'comment_id';
+    protected $likeTable = "comment_likes";
+    protected $likeColumn = "comment_id";
+    protected $event = CommentLiked::class;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'body',
-        'user_id',
-    ];
+    protected $fillable = ["body", "user_id"];
 
     /**
      * The attributes that should be cast.

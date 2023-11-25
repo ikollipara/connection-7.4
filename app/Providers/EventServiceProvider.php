@@ -2,8 +2,14 @@
 
 namespace App\Providers;
 
+use App\Events\PostLiked;
+use App\Events\PostCollectionLiked;
+use App\Events\CommentLiked;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
+use App\Listeners\UpdatePostLikedCount;
+use App\Listeners\UpdatePostCollectionLikesCount;
+use App\Listeners\UpdateCommentLikesCount;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 
@@ -17,6 +23,15 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        PostLiked::class => [
+            UpdatePostLikedCount::class,
+        ],
+        PostCollectionLiked::class => [
+            UpdatePostCollectionLikesCount::class,
+        ],
+        CommentLiked::class => [
+            UpdateCommentLikesCount::class,
         ],
     ];
 

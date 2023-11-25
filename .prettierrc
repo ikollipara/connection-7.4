@@ -1,0 +1,13 @@
+{
+    "parser": "php",
+    "plugins": ["@prettier/plugin-php", "@shufo/prettier-plugin-blade"],
+    "phpVersion": "7.4",
+    "overrides": [
+        {
+            "files": ["*.blade.php"],
+            "options": {
+                "parser": "blade",
+               "tabWidth": 2
+            }
+        }]
+}

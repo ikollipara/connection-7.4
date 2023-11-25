@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
 
 class SessionController extends Controller
 {
@@ -13,7 +12,7 @@ class SessionController extends Controller
         if ($this->current_user()) {
             return redirect()->route('home');
         }
-        return Inertia::render('Sessions/Create');
+        return view('sessions.create');
     }
 
     public function store(LoginRequest $request)
@@ -22,9 +21,6 @@ class SessionController extends Controller
             $request->session()->regenerate();
             return redirect()->route('home');
         }
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ]);
     }
 
     public function destroy()

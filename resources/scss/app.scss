@@ -3,9 +3,8 @@
 $primary: #003049;
 $success: #1eb167;
 
-@import "node_modules/slim-select/src/slim-select/slimselect.scss";
+@import url('slim-select/styles');
 @import "bulma/bulma.sass";
-@import "jcrop/dist/jcrop.css";
 
 .bulma-loader-mixin {
     @include loader;

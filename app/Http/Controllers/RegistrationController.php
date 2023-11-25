@@ -6,7 +6,6 @@ use App\Http\Requests\RegistrationRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use Inertia\Inertia;
 
 class RegistrationController extends Controller
 {
@@ -15,7 +14,7 @@ class RegistrationController extends Controller
         if ($this->current_user()) {
             return redirect()->route('home');
         }
-        return Inertia::render('Registration/Create');
+        return view('registration.create');
     }
 
     public function store(RegistrationRequest $request)

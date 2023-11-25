@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class FileUploadController extends Controller
@@ -15,11 +16,12 @@ class FileUploadController extends Controller
         ]);
 
         $path = ($request->file('file') ?? $request->file('image'))->store('public/files');
+        Log::debug($path);
         if ($path) {
             return response()->json([
                 'success' => 1,
                 'file' => [
-                    'url' => $path,
+                    'url' => Storage::url($path),
                 ],
             ]);
         } else {

@@ -27,12 +27,33 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     forceTLS: true
 // });
 
-import { createInertiaApp } from '@inertiajs/react'
-import { createRoot } from 'react-dom/client'
+import Alpine from 'alpinejs';
+import 'animate.css';
+import {toast} from 'bulma-toast';
 
-createInertiaApp({
-  resolve: name => require(`./Pages/${name}`),
-  setup({ el, App, props }) {
-    createRoot(el).render(<App {...props} />)
-  },
-})
+window.toast = toast;
+window.success = (message) => {
+    toast({
+        message: message,
+        type: 'is-success',
+        dismissible: true,
+        duration: 3000,
+        animate: {in: 'fadeIn', out: 'fadeOut'},
+    });
+};
+
+window.error = (message) => {
+    toast({
+        message: message,
+        type: 'is-danger',
+        dismissible: true,
+        duration: 3000,
+        animate: {in: 'fadeIn', out: 'fadeOut'},
+    });
+}
+window.Alpine = Alpine;
+
+import './editor';
+import './slim-select';
+
+Alpine.start();

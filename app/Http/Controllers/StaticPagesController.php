@@ -3,17 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
 class StaticPagesController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Home');
+        return view('home', ['title' => 'conneCTION']);
     }
 
     public function about()
     {
-        return Inertia::render('About');
+        return view('about', ['title' => 'About conneCTION']);
     }
 }

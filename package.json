@@ -23,23 +23,22 @@
         "@editorjs/table": "^2.3.0",
         "@editorjs/text-variant-tune": "^1.0.1",
         "@editorjs/underline": "^1.1.0",
+        "@prettier/plugin-php": "^0.21.0",
+        "@shufo/prettier-plugin-blade": "^1.13.4",
         "animate.css": "^4.1.1",
         "axios": "^0.21",
         "bulma": "^0.9.4",
         "bulma-toast": "^2.4.3",
-        "jcrop": "^3.0.1",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14",
+        "prettier": "^3.1.0",
         "resolve-url-loader": "^5.0.0",
         "sass": "^1.69.5",
-        "sass-loader": "^12.6.0",
-        "slim-select": "^2.6.0"
+        "sass-loader": "^12.6.0"
     },
     "dependencies": {
-        "@inertiajs/react": "^1.0.14",
-        "lucide-react": "^0.292.0",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0"
+        "alpinejs": "^3.13.3",
+        "slim-select": "^2.6.0"
     }
 }
