@@ -22,15 +22,15 @@
 @task('build-frontend', ['on' => 'local'])
   npm ci
   npm run prod
-  tar -czf public
+  tar -czf public.tar.gz public
   scp public.tar.gz connection@csce.unl.edu:public_html/connection-main
   rm public.tar.gz
-  ssh connection@csce.unl.edu 'cd public_html/connection-main && rm public && tar -xzf public.tar.gz && rm public.tar.gz'
+  ssh connection@csce.unl.edu 'cd public_html/connection-main ; rm -rf public ; tar -xzf public.tar.gz ; rm public.tar.gz'
 @endtask
 
 @task('update-repo', ['on' => 'csce'])
   cd public_html/connection-main
-  git pull origin master
+  git pull origin main
   php composer.phar install --optimize-autoloader --no-dev
 @endtask
 

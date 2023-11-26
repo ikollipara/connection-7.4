@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View\Forms\Components;
+namespace App\View\Components\Forms;
 
 use Illuminate\View\Component;
 
@@ -23,6 +23,6 @@ class Grades extends Component
      */
     public function render()
     {
-        return view('components.forms.grades');
+        return view("components.forms.grades");
     }
 }
