@@ -18,7 +18,4 @@ mix
     resolve: {
       extensions: [".*",".wasm",".mjs",".js",".jsx",".json"]
     },
-    output: {
-        publicPath: "/connection/"
-    }
   })

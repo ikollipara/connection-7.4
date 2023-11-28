@@ -2,8 +2,8 @@
 
 @story('deploy')
   maintenance-on
-  build-frontend
   update-repo
+  build-frontend
   run-migrations
   cache
   maintenance-off
