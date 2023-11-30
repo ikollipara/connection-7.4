@@ -84,6 +84,23 @@
                 <button type="button" x-on:click="currentStep--" class="button is-primary is-outlined">
                     Back
                 </button>
+                <button type="button" x-on:click="currentStep++" class="button is-primary is-outlined">
+                    Next
+                </button>
+                <button type="submit" class="button is-primary">
+                    Sign Up
+                </button>
+            </div>
+        </div>
+    </section>
+    <section x-show="currentStep == 4">
+        <h2 class="subtitle is-3 has-text-centered">(Optional) Accept Research</h2>
+       <x-accept-research wire:model="accept_research" />
+        <div class="field is-grouped is-grouped-centered">
+            <div class="control">
+                <button type="button" x-on:click="currentStep--" class="button is-primary is-outlined">
+                    Back
+                </button>
                 <button type="submit" class="button is-primary">
                     Sign Up
                 </button>

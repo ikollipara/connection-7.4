@@ -22,29 +22,35 @@ class SignUpForm extends Component
     public string $subject;
     public array $grades;
     public string $bio;
+    public bool $accept_research = false;
 
     protected $rules = [
-        'bio' => ['json', 'required'],
-        'avatar' => ['image'],
-        'grades' => ['array', 'required'],
-        'subject' => ['required'],
-        'school' => ['required'],
-        'password_confirmation' => ['same:password', 'required'],
-        'password' => ['regex:/^(?=.*[1-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()]).{12,}$/', 'required'],
-        'email' => ['email', 'required', 'unique:\App\Models\User,email'],
-        'last_name' => ['string', 'required'],
-        'first_name' => ['string', 'required'],
+        "bio" => ["json", "required"],
+        "avatar" => ["image"],
+        "grades" => ["array", "required"],
+        "subject" => ["required"],
+        "school" => ["required"],
+        "password_confirmation" => ["same:password", "required"],
+        "password" => [
+            'regex:/^(?=.*[1-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()]).{12,}$/',
+            "required",
+        ],
+        "email" => ["email", "required", "unique:\App\Models\User,email"],
+        "last_name" => ["string", "required"],
+        "first_name" => ["string", "required"],
+        "accept_research" => ["boolean"],
     ];
 
     protected $messages = [
-        'password.regex' => 'The password needs at least 1 lowercase, one uppercase, one number, one symbol (@#$%^&-+=()), and is at least 12 characters.',
-        'password_confirmation.same' => 'Must match the password',
+        "password.regex" =>
+            'The password needs at least 1 lowercase, one uppercase, one number, one symbol (@#$%^&-+=()), and is at least 12 characters.',
+        "password_confirmation.same" => "Must match the password",
     ];
 
     public function mount()
     {
-        $this->bio = json_encode(['blocks' => []]);
-        $this->password = '';
+        $this->bio = json_encode(["blocks" => []]);
+        $this->password = "";
     }
 
     public function updated($propertyName)
@@ -54,31 +60,39 @@ class SignUpForm extends Component
 
     public function save()
     {
-        session()->flash('status', 'There was an error in your sign up. Try again.');
+        session()->flash(
+            "status",
+            "There was an error in your sign up. Try again.",
+        );
         $this->validate();
-        $user = User::create([
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'email' => $this->email,
-            'password' => $this->password,
-            'bio' => $this->bio,
-            'grades' => $this->grades,
-            'school' => $this->school,
-            'subject' => $this->subject,
-            'gender' => '',
+        $user = new User([
+            "first_name" => $this->first_name,
+            "last_name" => $this->last_name,
+            "email" => $this->email,
+            "password" => $this->password,
+            "bio" => $this->bio,
+            "grades" => $this->grades,
+            "school" => $this->school,
+            "subject" => $this->subject,
+            "gender" => "",
+            "accepted_research" => $this->accept_research,
         ]);
-        $avatar = $this->avatar->store('avatars');
-        $user->avatar = $avatar;
-        $user->save();
-        auth()->login($user);
-
-        return redirect()
-            ->route('home')
-            ->with('status', 'Successfully Signed Up');
+        $user->avatar = $this->avatar->store("avatars");
+        if ($user->save()) {
+            auth()->login($user);
+            $this->dispatchBrowserEvent("success", [
+                "message" => "Welcome to ConneCTION!",
+            ]);
+            return redirect()->route("home");
+        } else {
+            $this->dispatchBrowserEvent("error", [
+                "message" => "There was an error in your sign up. Try again.",
+            ]);
+        }
     }
 
     public function render()
     {
-        return view('livewire.sign-up-form');
+        return view("livewire.sign-up-form");
     }
 }
