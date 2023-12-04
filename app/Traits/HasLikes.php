@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\DB;
  */
 trait HasLikes
 {
-
     /**
      * Get the total number of likes for the item.
      */
@@ -33,7 +32,7 @@ trait HasLikes
     public function isLikedBy($user)
     {
         return DB::table($this->likeTable)
-            ->where('user_id', $user->id)
+            ->where("user_id", $user->id)
             ->where($this->likeColumn, $this->id)
             ->exists();
     }
@@ -48,11 +47,11 @@ trait HasLikes
     public function like($user)
     {
         DB::table($this->likeTable)->insert([
-            'user_id' => $user->id,
+            "user_id" => $user->id,
             $this->likeColumn => $this->id,
         ]);
 
-        $this->event::dispatch($this);
+        $this->likeEvent::dispatch($this);
     }
 
     /**
@@ -65,10 +64,11 @@ trait HasLikes
     public function unlike($user)
     {
         DB::table($this->likeTable)
-            ->where('user_id', $user->id)
+            ->where("user_id", $user->id)
             ->where($this->likeColumn, $this->id)
             ->delete();
 
-        $this->event::dispatch($this);
+        $this->likeEvent::dispatch($this);
+    }
     }
 }

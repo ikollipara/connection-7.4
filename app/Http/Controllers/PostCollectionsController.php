@@ -45,9 +45,16 @@ class PostCollectionsController extends Controller
     public function show(PostCollection $postCollection)
     {
         $this->authorize("view", $postCollection);
-        return view("collections.show", [
-            "collection" => $postCollection,
-        ]);
+        if ($postCollection->isViewedBy($this->current_user())) {
+            return view("collections.show", [
+                "collection" => $postCollection,
+            ]);
+        } else {
+            $postCollection->view($this->current_user());
+            return view("collections.show", [
+                "collection" => $postCollection,
+            ]);
+        }
     }
 
     /**

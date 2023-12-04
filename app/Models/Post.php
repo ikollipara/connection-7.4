@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Contracts\HasLikes;
+use App\Contracts\Viewable;
 use App\Traits\HasComments;
 use App\Traits\HasLikes as HasLikesTrait;
 use App\Traits\HasUuids;
@@ -11,20 +12,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use App\Events\PostLiked;
+use App\Traits\HasViews;
 use Laravel\Scout\Searchable;
 
-class Post extends Model implements HasLikes
+class Post extends Model implements HasLikes, Viewable
 {
     use HasFactory,
         HasUuids,
         SoftDeletes,
         HasComments,
         HasLikesTrait,
+        HasViews,
         Searchable;
 
+    protected $viewTable = "post_views";
+    protected $viewColumn = "post_id";
+    protected $viewEvent = PostViewed::class;
     protected $likeTable = "post_likes";
     protected $likeColumn = "post_id";
-    protected $event = PostLiked::class;
+    protected $likeEvent = PostLiked::class;
 
     /**
      * The attributes that are mass assignable.

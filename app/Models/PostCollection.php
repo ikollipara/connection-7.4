@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Contracts\HasLikes;
+use App\Contracts\Viewable;
 use App\Traits\HasComments;
 use App\Traits\HasLikes as HasLikesTrait;
 use App\Traits\HasUuids;
@@ -11,21 +12,26 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use App\Events\PostCollectionLiked;
+use App\Traits\HasViews;
 use Illuminate\Support\Arr;
 use Laravel\Scout\Searchable;
 
-class PostCollection extends Model implements HasLikes
+class PostCollection extends Model implements HasLikes, Viewable
 {
     use HasFactory,
         HasUuids,
         SoftDeletes,
         HasComments,
+        HasViews,
         HasLikesTrait,
         Searchable;
 
+    protected $viewTable = "post_collection_views";
+    protected $viewColumn = "post_collection_id";
+    protected $viewEvent = PostCollectionViewed::class;
     protected $likeTable = "post_collection_likes";
     protected $likeColumn = "post_collection_id";
-    protected $event = PostCollectionLiked::class;
+    protected $likeEvent = PostCollectionLiked::class;
 
     /**
      * The attributes that are mass assignable.

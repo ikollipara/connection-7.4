@@ -15,7 +15,7 @@ class Comment extends Model implements HasLikes
 
     protected $likeTable = "comment_likes";
     protected $likeColumn = "comment_id";
-    protected $event = CommentLiked::class;
+    protected $likeEvent = CommentLiked::class;
 
     /**
      * The attributes that are mass assignable.

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PostViewed;
 use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -16,14 +17,13 @@ class PostsController extends Controller
      */
     public function index(Request $request)
     {
-        $status = $request->query('status') ?? 'draft';
-        return view('posts.index', [
-            'posts' => $this
-                ->current_user()
+        $status = $request->query("status") ?? "draft";
+        return view("posts.index", [
+            "posts" => $this->current_user()
                 ->posts()
                 ->status($status)
                 ->get(),
-            'status' => $status,
+            "status" => $status,
         ]);
     }
 
@@ -34,7 +34,7 @@ class PostsController extends Controller
      */
     public function create()
     {
-        return view('posts.create');
+        return view("posts.create");
     }
 
     /**
@@ -45,8 +45,13 @@ class PostsController extends Controller
      */
     public function show(Post $post)
     {
-        $this->authorize('view', $post);
-        return view('posts.show', ['post' => $post->with('user')->first()]);
+        $this->authorize("view", $post);
+        if ($post->isViewedBy($this->current_user())) {
+            return view("posts.show", ["post" => $post]);
+        } else {
+            $post->view($this->current_user());
+            return view("posts.show", ["post" => $post]);
+        }
     }
 
     /**
@@ -57,7 +62,7 @@ class PostsController extends Controller
      */
     public function edit(Post $post)
     {
-        $this->authorize('update', $post);
-        return view('posts.edit', ['post' => $post]);
+        $this->authorize("update", $post);
+        return view("posts.edit", ["post" => $post]);
     }
 }
