@@ -70,5 +70,4 @@ trait HasLikes
 
         $this->likeEvent::dispatch($this);
     }
-    }
 }
