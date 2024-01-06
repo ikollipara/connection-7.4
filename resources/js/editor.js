@@ -1,9 +1,8 @@
-import Alpine from 'alpinejs';
 
-Alpine.data("editor", (readOnly, cannotUpload, csrf, body) => ({
+export default (readOnly, cannotUpload, csrf, body) => ({
         async init() {
             await Promise.all([
-                import("@editorjs/editorjs"),
+                /* webpackPreload: true */ import("@editorjs/editorjs"),
                 import("@editorjs/header"),
                 import("@editorjs/attaches"),
                 import("@editorjs/delimiter"),
@@ -97,4 +96,4 @@ Alpine.data("editor", (readOnly, cannotUpload, csrf, body) => ({
         async save() {
             return await this.editor.save();
         },
-    }));
+    });

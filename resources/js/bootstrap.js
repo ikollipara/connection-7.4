@@ -1,4 +1,4 @@
-window._ = require('lodash');
+// window._ = require('lodash');
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -27,33 +27,34 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     forceTLS: true
 // });
 
-import Alpine from 'alpinejs';
-import 'animate.css';
-import {toast} from 'bulma-toast';
+import editor from "./editor";
+import slimSelect from "./slim-select";
+import Alpine from 'alpinejs'
 
-window.toast = toast;
-window.success = (message) => {
-    toast({
-        message: message,
-        type: 'is-success',
-        dismissible: true,
-        duration: 3000,
-        animate: {in: 'fadeIn', out: 'fadeOut'},
-    });
-};
+window.Alpine = Alpine
+Alpine.data("editor", editor);
+Alpine.data("slimSelect", slimSelect);
 
-window.error = (message) => {
-    toast({
-        message: message,
-        type: 'is-danger',
-        dismissible: true,
-        duration: 3000,
-        animate: {in: 'fadeIn', out: 'fadeOut'},
-    });
-}
-window.Alpine = Alpine;
+Alpine.start()
 
-import './editor';
-import './slim-select';
-
-Alpine.start();
+import("bulma-toast").then(({ toast }) => {
+    window.toast = toast;
+    window.success = (message) => {
+        toast({
+            message: message,
+            type: 'is-success',
+            dismissible: true,
+            duration: 3000,
+            animate: {in: 'fadeIn', out: 'fadeOut'},
+        });
+    };
+    window.error = (message) => {
+        toast({
+            message: message,
+            type: 'is-danger',
+            dismissible: true,
+            duration: 3000,
+            animate: {in: 'fadeIn', out: 'fadeOut'},
+        });
+    }
+});

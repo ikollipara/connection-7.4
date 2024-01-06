@@ -50,7 +50,10 @@ class SignUpForm extends Component
         "password_confirmation.same" => "Must match the password",
     ];
 
-    public function updated(mixed $propertyName): void
+    /**
+     * @param mixed $propertyName
+     */
+    public function updated($propertyName): void
     {
         $this->validateOnly($propertyName);
     }

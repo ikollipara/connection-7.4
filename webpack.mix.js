@@ -1,4 +1,7 @@
 const mix = require('laravel-mix');
+require("laravel-mix-purgecss");
+require("laravel-mix-compress");
+require("laravel-mix-polyfill");
 
 /*
  |--------------------------------------------------------------------------
@@ -19,3 +22,11 @@ mix
       extensions: [".*",".wasm",".mjs",".js",".jsx",".json"]
     },
   })
+
+if (mix.inProduction()) {
+  mix.purgeCss()
+  .polyfill()
+  .compress({
+    useBrotli: true,
+  })
+}
