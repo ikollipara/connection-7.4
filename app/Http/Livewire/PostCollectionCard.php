@@ -9,7 +9,7 @@ class PostCollectionCard extends Component
 {
     public PostCollection $collection;
 
-    public function archive()
+    public function archive(): void
     {
         if ($this->collection->delete()) {
             $this->emit("collectionArchived", $this->collection->id);
@@ -23,7 +23,7 @@ class PostCollectionCard extends Component
         }
     }
 
-    public function restore()
+    public function restore(): void
     {
         if ($this->collection->restore()) {
             $this->emit("collectionRestored", $this->collection->id);
@@ -36,6 +36,10 @@ class PostCollectionCard extends Component
             ]);
         }
     }
+
+    /**
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     */
     public function render()
     {
         return view("livewire.post-collection-card");

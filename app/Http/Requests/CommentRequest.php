@@ -19,12 +19,12 @@ class CommentRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array
+     * @return array<string, string|array<string>>
      */
     public function rules()
     {
         return [
-            'body' => 'required|string',
+            "body" => "required|string",
         ];
     }
 }

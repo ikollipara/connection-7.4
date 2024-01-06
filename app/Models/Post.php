@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Contracts\HasLikes;
+use App\Contracts\Likable;
 use App\Contracts\Viewable;
 use App\Traits\HasComments;
-use App\Traits\HasLikes as HasLikesTrait;
+use App\Traits\HasLikes;
 use App\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,23 +14,26 @@ use Illuminate\Support\Str;
 use App\Events\PostLiked;
 use App\Traits\HasViews;
 use Laravel\Scout\Searchable;
+use App\Events\PostViewed;
 
-class Post extends Model implements HasLikes, Viewable
+class Post extends Model implements Likable, Viewable
 {
     use HasFactory,
         HasUuids,
         SoftDeletes,
         HasComments,
-        HasLikesTrait,
+        HasLikes,
         HasViews,
         Searchable;
 
-    protected $viewTable = "post_views";
-    protected $viewColumn = "post_id";
-    protected $viewEvent = PostViewed::class;
-    protected $likeTable = "post_likes";
-    protected $likeColumn = "post_id";
-    protected $likeEvent = PostLiked::class;
+    protected string $viewTable = "post_views";
+    protected string $viewColumn = "post_id";
+    /** @var class-string */
+    protected string $viewEvent = PostViewed::class;
+    protected string $likeTable = "post_likes";
+    protected string $likeColumn = "post_id";
+    /** @var class-string */
+    protected string $likeEvent = PostLiked::class;
 
     /**
      * The attributes that are mass assignable.
@@ -49,6 +52,7 @@ class Post extends Model implements HasLikes, Viewable
         "metadata" => "array",
         "published" => "boolean",
         "id" => "string",
+        "title" => "string",
     ];
 
     /**
@@ -63,14 +67,19 @@ class Post extends Model implements HasLikes, Viewable
 
     /**
      * Get the user that owns the post.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, self>
      */
     public function user()
     {
+        /** @phpstan-ignore-next-line */
         return $this->belongsTo(User::class);
     }
 
     /**
      * Get all the posts for the given status.
+     * @param \Illuminate\Database\Eloquent\Builder<self> $query
+     * @param string $status
+     * @return \Illuminate\Database\Eloquent\Builder<self>
      */
     public function scopeStatus($query, $status)
     {
@@ -85,6 +94,10 @@ class Post extends Model implements HasLikes, Viewable
         }
     }
 
+    /**
+     * Convert PostCollection to Searchable Array
+     * @return array<string, mixed>
+     */
     public function toSearchableArray()
     {
         return [

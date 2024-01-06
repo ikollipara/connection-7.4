@@ -9,13 +9,17 @@ use Livewire\Component;
 
 class Search extends Component
 {
+    /**
+     * @var array<string, array<string, string>>
+     */
     protected $queryString = [
         "query" => ["as" => "q"],
     ];
 
+    /** @var string */
     public $query;
     public string $type = "";
-    /** @var array<\App\Models\Post|\App\Models\PostCollection> */
+    /** @var array<array<string, mixed>> */
     public array $results = [];
     /** @var array<\App\Enums\Category> */
     public array $categories = [];
@@ -28,36 +32,49 @@ class Search extends Component
     /** @var array<\App\Enums\Practice> */
     public array $practices = [];
 
-    public function mount()
+    public function mount(): void
     {
         if ($this->query) {
             $this->search();
         }
     }
 
-    public function search()
+    /**
+     * @param array<string, mixed> $post_or_post_collection_array
+     * @return array<string, mixed>
+     */
+    protected function fillUserFullName(
+        array $post_or_post_collection_array
+    ): array {
+        /** @var User|null */
+        $user = User::find($post_or_post_collection_array["user_id"]);
+        if ($user) {
+            $post_or_post_collection_array["user"] = $user->full_name();
+        } else {
+            $post_or_post_collection_array["user"] = "[Deleted]";
+        }
+        return $post_or_post_collection_array;
+    }
+
+    public function search(): void
     {
         if ($this->type === "") {
             $this->results = array_merge(
                 array_map(
-                    function ($post_array) {
+                    /** @phpstan-ignore-next-line */
+                    function (array $post_array): array {
                         $post_array["type"] = "post";
-                        $post_array["user"] = User::find(
-                            $post_array["user_id"],
-                        )->full_name();
-                        return $post_array;
+                        return $this->fillUserFullName($post_array);
                     },
                     Post::search($this->query)
                         ->get()
                         ->toArray(),
                 ),
                 array_map(
-                    function ($collection_array) {
+                    /** @phpstan-ignore-next-line */
+                    function (array $collection_array) {
                         $collection_array["type"] = "collection";
-                        $collection_array["user"] = User::find(
-                            $collection_array["user_id"],
-                        )->full_name();
-                        return $collection_array;
+                        return $this->fillUserFullName($collection_array);
                     },
                     PostCollection::search($this->query)
                         ->get()
@@ -65,44 +82,90 @@ class Search extends Component
                 ),
             );
         } elseif ($this->type === "post") {
-            $this->results = Post::search($this->query)
-                ->get()
-                ->toArray();
+            $this->results = array_map(
+                /** @phpstan-ignore-next-line */
+                fn (array $post_array) => $this->fillUserFullName($post_array),
+                Post::search($this->query)
+                    ->get()
+                    ->toArray(),
+            );
         } elseif ($this->type === "collection") {
-            $this->results = PostCollection::search($this->query)
-                ->get()
-                ->toArray();
+            $this->results = array_map(
+                /** @phpstan-ignore-next-line */
+                fn (array $collection_array) => $this->fillUserFullName(
+                    $collection_array,
+                ),
+                PostCollection::search($this->query)
+                    ->get()
+                    ->toArray(),
+            );
         }
 
         if ($this->standards) {
-            $this->results = array_filter($this->results, function ($item) {
-                count(array_intersect($item["standards"], $this->standards)) >
-                    0;
-            });
+            $this->results = array_filter(
+                $this->results,
+                /**
+                 * @param array<string, mixed> $item
+                 */
+                function (array $item) {
+                    count(
+                        /** @phpstan-ignore-next-line */
+                        array_intersect($item["standards"], $this->standards),
+                    ) > 0;
+                },
+            );
         }
         if ($this->practices) {
-            $this->results = array_filter($this->results, function ($item) {
-                count(array_intersect($item["practices"], $this->practices)) >
-                    0;
-            });
+            $this->results = array_filter(
+                $this->results,
+                /**
+                 * @param array<string, mixed> $item
+                 */
+                function (array $item) {
+                    count(
+                        /** @phpstan-ignore-next-line */
+                        array_intersect($item["practices"], $this->practices),
+                    ) > 0;
+                },
+            );
         }
         if ($this->grades) {
-            $this->results = array_filter($this->results, function ($item) {
-                count(array_intersect($item["grades"], $this->grades)) > 0;
-            });
+            $this->results = array_filter(
+                $this->results,
+                /**
+                 * @param array<string, mixed> $item
+                 */
+                function (array $item) {
+                    count(
+                        /** @phpstan-ignore-next-line */
+                        array_intersect($item["grades"], $this->grades),
+                    ) > 0;
+                },
+            );
         }
         if ($this->categories) {
-            $this->results = array_filter($this->results, function ($item) {
-                in_array($item["category"], $this->categories);
-            });
+            $this->results = array_filter(
+                $this->results,
+                fn (array $item) => in_array(
+                    $item["category"],
+                    $this->categories,
+                ),
+            );
         }
         if ($this->audiences) {
-            $this->results = array_filter($this->results, function ($item) {
-                in_array($item["audiences"], $this->audiences);
-            });
+            $this->results = array_filter(
+                $this->results,
+                fn (array $item) => in_array(
+                    $item["audiences"],
+                    $this->audiences,
+                ),
+            );
         }
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     */
     public function render()
     {
         return view("livewire.search");

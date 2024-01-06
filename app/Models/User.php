@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Traits\HasUuids;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Passwords\CanResetPassword as PasswordsCanResetTrait;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,9 +15,9 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
-    use HasApiTokens, HasFactory, Notifiable, HasUuids;
+    use HasApiTokens, HasFactory, Notifiable, HasUuids, PasswordsCanResetTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -54,6 +57,7 @@ class User extends Authenticatable
 
     /**
      * Get the user's posts
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Post>
      */
     public function posts()
     {
@@ -62,6 +66,7 @@ class User extends Authenticatable
 
     /**
      * Get the user's post collections
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\PostCollection>
      */
     public function postCollections()
     {
@@ -70,6 +75,7 @@ class User extends Authenticatable
 
     /**
      * Get the user's comments
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Comment>
      */
     public function comments()
     {
@@ -85,7 +91,7 @@ class User extends Authenticatable
         return "{$this->first_name} {$this->last_name}";
     }
 
-    public function avatar_url()
+    public function avatar_url(): string
     {
         /**
          * If the user doesn't have an avatar,
@@ -110,6 +116,9 @@ class User extends Authenticatable
                 ->trim()
                 ->lower();
             $user->password = Hash::make($user->password);
+        });
+        static::created(function (User $user) {
+            event(new Registered($user));
         });
     }
 }

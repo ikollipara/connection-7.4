@@ -5,21 +5,25 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PostCollectionRequest;
 use App\Models\PostCollection;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
 class PostCollectionsController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function index(Request $request)
     {
-        $status = $request->query("status") ?? "draft";
+        $status = $request->query("status", "draft");
+
+        /** @var \App\Models\User */
+        $user = $this->current_user();
+
         return view("collections.index", [
-            "collections" => $this->current_user()
+            "collections" => $user
                 ->postCollections()
+                /** @phpstan-ignore-next-line */
                 ->status($status)
                 ->get(),
             "status" => $status,
@@ -29,7 +33,7 @@ class PostCollectionsController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function create()
     {
@@ -40,28 +44,29 @@ class PostCollectionsController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\PostCollection  $postCollection
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function show(PostCollection $postCollection)
     {
         $this->authorize("view", $postCollection);
-        if ($postCollection->isViewedBy($this->current_user())) {
-            return view("collections.show", [
-                "collection" => $postCollection,
-            ]);
-        } else {
-            $postCollection->view($this->current_user());
-            return view("collections.show", [
-                "collection" => $postCollection,
-            ]);
+
+        /** @var \App\Models\User */
+        $user = $this->current_user();
+
+        if ($postCollection->isViewedBy($user)) {
+            $postCollection->view($user);
         }
+
+        return view("collections.show", [
+            "collection" => $postCollection,
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\PostCollection  $postCollection
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function edit(PostCollection $postCollection)
     {

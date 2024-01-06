@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -20,25 +21,37 @@ class Settings extends Component
 
     public string $subject;
 
+    /** @var array<string> */
     public array $grades;
 
+    /** @var \Illuminate\Http\UploadedFile|null */
     public $avatar = null;
 
     public string $bio;
 
-    public function mount()
+    public User $user;
+
+    public function mount(): void
     {
+        $user = auth()->user();
+        if (!$user) {
+            return;
+        }
         $this->fill([
-            "first_name" => auth()->user()->first_name,
-            "last_name" => auth()->user()->last_name,
-            "email" => auth()->user()->email,
-            "bio" => json_encode(auth()->user()->bio),
-            "school" => auth()->user()->school,
-            "subject" => auth()->user()->subject,
-            "grades" => auth()->user()->grades,
+            "user" => $user,
+            "first_name" => $user->first_name,
+            "last_name" => $user->last_name,
+            "email" => $user->email,
+            "bio" => json_encode($user->bio),
+            "school" => $user->school,
+            "subject" => $user->subject,
+            "grades" => $user->grades,
         ]);
     }
 
+    /**
+     * @return array<string, string|array<string>>
+     */
     public function rules()
     {
         return [
@@ -53,21 +66,21 @@ class Settings extends Component
         ];
     }
 
-    public function reset_form()
+    public function reset_form(): void
     {
         $this->fill([
-            "first_name" => auth()->user()->first_name,
-            "last_name" => auth()->user()->last_name,
-            "email" => auth()->user()->email,
-            "bio" => json_encode(auth()->user()->bio),
-            "school" => auth()->user()->school,
-            "subject" => auth()->user()->subject,
-            "grades" => auth()->user()->grades,
+            "first_name" => $this->user->first_name,
+            "last_name" => $this->user->last_name,
+            "email" => $this->user->email,
+            "bio" => json_encode($this->user->bio),
+            "school" => $this->user->school,
+            "subject" => $this->user->subject,
+            "grades" => $this->user->grades,
         ]);
         $this->avatar = null;
     }
 
-    public function save()
+    public function save(): void
     {
         /** @var \App\Models\User */
         $user = auth()->user();
@@ -83,7 +96,9 @@ class Settings extends Component
         ]);
         if ($this->avatar) {
             $avatar = $this->avatar->store("avatars", "public");
-            $user->avatar = $avatar;
+            if ($avatar) {
+                $user->avatar = $avatar;
+            }
         }
         if ($user->save()) {
             $this->emit("success", ["message" => "Successfully Updated!"]);
@@ -97,6 +112,9 @@ class Settings extends Component
         }
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     */
     public function render()
     {
         return view("livewire.settings");

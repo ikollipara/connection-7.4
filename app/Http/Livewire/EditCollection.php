@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\Enums\Audience;
 use App\Enums\Category;
 use App\Models\PostCollection;
+use Illuminate\Http\RedirectResponse;
 use Livewire\Component;
 
 class EditCollection extends Component
@@ -17,10 +18,13 @@ class EditCollection extends Component
 
     public string $body = '{"blocks": [] }';
 
+    /** @var array<string> */
     public array $grades = [];
 
+    /** @var array<string> */
     public array $standards = [];
 
+    /** @var array<string> */
     public array $practices = [];
 
     public string $category = Category::Material;
@@ -41,6 +45,9 @@ class EditCollection extends Component
         ]);
     }
 
+    /**
+     * @return \Illuminate\Http\RedirectResponse|void
+     */
     public function save()
     {
         $this->validate();
@@ -62,7 +69,7 @@ class EditCollection extends Component
         }
     }
 
-    public function removeEntry(string $post_id)
+    public function removeEntry(string $post_id): void
     {
         $this->collection->posts()->detach([$post_id]);
         $this->dispatchBrowserEvent("success", [
@@ -71,6 +78,9 @@ class EditCollection extends Component
         $this->emit("postRemoved", $post_id);
     }
 
+    /**
+     * @return array<string, string|array<string>>
+     */
     public function rules()
     {
         return [
@@ -79,6 +89,9 @@ class EditCollection extends Component
         ];
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     */
     public function render()
     {
         return view("livewire.edit-collection");

@@ -12,7 +12,7 @@ class PostCollectionCommentsController extends Controller
      * Display a listing of the resource.
      *
      * @param  \App\Models\PostCollection  $postCollection
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function index(PostCollection $postCollection)
     {

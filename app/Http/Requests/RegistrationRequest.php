@@ -19,21 +19,22 @@ class RegistrationRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array
+     * @return array<string, string|array<string>>
      */
     public function rules()
     {
         return [
-            'email' => 'required|email',
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'bio' => 'required|json',
-            'grades' => 'required|array',
-            'school' => 'required|string',
-            'subject' => 'required|string',
-            'avatar' => 'image',
-            'gender' => 'required|string',
-            'password' => 'required|string|confirmed|min:12|regex:/[a-z]/|regex:/[A-Z]/|regex:/[0-9]/|regex:/[@$!%*#?&]/'
+            "email" => "required|email",
+            "first_name" => "required|string",
+            "last_name" => "required|string",
+            "bio" => "required|json",
+            "grades" => "required|array",
+            "school" => "required|string",
+            "subject" => "required|string",
+            "avatar" => "image",
+            "gender" => "required|string",
+            "password" =>
+                'required|string|confirmed|min:12|regex:/[a-z]/|regex:/[A-Z]/|regex:/[0-9]/|regex:/[@$!%*#?&]/',
         ];
     }
 }

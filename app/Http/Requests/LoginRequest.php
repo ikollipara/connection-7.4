@@ -19,13 +19,13 @@ class LoginRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array
+     * @return array<string, string|array<string>>
      */
     public function rules()
     {
         return [
-            'email' => 'email|required|exists:users,email',
-            'password' => 'required|string',
+            "email" => "email|required|exists:users,email",
+            "password" => "required|string",
         ];
     }
 }

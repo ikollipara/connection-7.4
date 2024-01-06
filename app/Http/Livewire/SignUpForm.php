@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
@@ -15,70 +16,85 @@ class SignUpForm extends Component
     public string $first_name;
     public string $last_name;
     public string $email;
-    public string $password;
+    public string $password = "";
     public string $password_confirmation;
+    /** @var UploadedFile|null */
     public $avatar = null;
     public string $school;
     public string $subject;
+    /** @var array<string> */
     public array $grades;
-    public string $bio;
+    public string $bio = '{"blocks":[]}';
 
+    /** @var array<string, array<string>|string> */
     protected $rules = [
-        'bio' => ['json', 'required'],
-        'avatar' => ['image'],
-        'grades' => ['array', 'required'],
-        'subject' => ['required'],
-        'school' => ['required'],
-        'password_confirmation' => ['same:password', 'required'],
-        'password' => ['regex:/^(?=.*[1-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()]).{12,}$/', 'required'],
-        'email' => ['email', 'required', 'unique:\App\Models\User,email'],
-        'last_name' => ['string', 'required'],
-        'first_name' => ['string', 'required'],
+        "bio" => ["json", "required"],
+        "avatar" => ["image"],
+        "grades" => ["array", "required"],
+        "subject" => ["required"],
+        "school" => ["required"],
+        "password_confirmation" => ["same:password", "required"],
+        "password" => [
+            'regex:/^(?=.*[1-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()]).{12,}$/',
+            "required",
+        ],
+        "email" => ["email", "required", "unique:\App\Models\User,email"],
+        "last_name" => ["string", "required"],
+        "first_name" => ["string", "required"],
     ];
 
+    /** @var array<string, string> */
     protected $messages = [
-        'password.regex' => 'The password needs at least 1 lowercase, one uppercase, one number, one symbol (@#$%^&-+=()), and is at least 12 characters.',
-        'password_confirmation.same' => 'Must match the password',
+        "password.regex" =>
+            'The password needs at least 1 lowercase, one uppercase, one number, one symbol (@#$%^&-+=()), and is at least 12 characters.',
+        "password_confirmation.same" => "Must match the password",
     ];
 
-    public function mount()
-    {
-        $this->bio = json_encode(['blocks' => []]);
-        $this->password = '';
-    }
-
-    public function updated($propertyName)
+    public function updated(mixed $propertyName): void
     {
         $this->validateOnly($propertyName);
     }
 
-    public function save()
+    public function save(): RedirectResponse
     {
-        session()->flash('status', 'There was an error in your sign up. Try again.');
         $this->validate();
-        $user = User::create([
-            'first_name' => $this->first_name,
-            'last_name' => $this->last_name,
-            'email' => $this->email,
-            'password' => $this->password,
-            'bio' => $this->bio,
-            'grades' => $this->grades,
-            'school' => $this->school,
-            'subject' => $this->subject,
-            'gender' => '',
+        $user = new User([
+            "first_name" => $this->first_name,
+            "last_name" => $this->last_name,
+            "email" => $this->email,
+            "password" => $this->password,
+            "bio" => $this->bio,
+            "grades" => $this->grades,
+            "school" => $this->school,
+            "subject" => $this->subject,
+            "gender" => "",
         ]);
-        $avatar = $this->avatar->store('avatars');
-        $user->avatar = $avatar;
-        $user->save();
-        auth()->login($user);
-
-        return redirect()
-            ->route('home')
-            ->with('status', 'Successfully Signed Up');
+        if ($user->save()) {
+            if ($this->avatar) {
+                $avatar = $this->avatar->store("avatars");
+                if ($avatar) {
+                    $user->avatar = $avatar;
+                    $user->save();
+                }
+            }
+            auth()->login($user);
+            $this->dispatchBrowserEvent("success", [
+                "message" => "You have successfully signed up!",
+            ]);
+            return redirect()->route("home");
+        } else {
+            $this->dispatchBrowserEvent("error", [
+                "message" => "There was an error in your sign up. Try again.",
+            ]);
+            return redirect()->back(303, []);
+        }
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     */
     public function render()
     {
-        return view('livewire.sign-up-form');
+        return view("livewire.sign-up-form");
     }
 }

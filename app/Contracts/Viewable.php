@@ -2,11 +2,13 @@
 
 namespace App\Contracts;
 
+use App\Models\User;
+
 interface Viewable
 {
-    public function views();
+    public function views(): int;
 
-    public function isViewedBy($user);
+    public function isViewedBy(User $user): bool;
 
-    public function view($user);
+    public function view(User $user): void;
 }

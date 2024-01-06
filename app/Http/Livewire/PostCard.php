@@ -9,7 +9,7 @@ class PostCard extends Component
 {
     public Post $post;
 
-    public function archive()
+    public function archive(): void
     {
         if ($this->post->delete()) {
             $this->emit("postArchived", $this->post->id);
@@ -23,7 +23,7 @@ class PostCard extends Component
         }
     }
 
-    public function restore()
+    public function restore(): void
     {
         if ($this->post->restore()) {
             $this->emit("postRestored", $this->post->id);
@@ -37,6 +37,9 @@ class PostCard extends Component
         }
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     */
     public function render()
     {
         return view("livewire.post-card");

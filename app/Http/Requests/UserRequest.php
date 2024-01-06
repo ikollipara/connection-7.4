@@ -19,19 +19,19 @@ class UserRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array
+     * @return array<string, string|array<string>>
      */
     public function rules()
     {
         return [
-            'email' => 'email',
-            'first_name' => 'string',
-            'last_name' => 'string',
-            'school' => 'string',
-            'subject' => 'string',
-            'grades' => 'array',
-            'avatar' => 'image',
-            'bio' => 'json',
+            "email" => "email",
+            "first_name" => "string",
+            "last_name" => "string",
+            "school" => "string",
+            "subject" => "string",
+            "grades" => "array",
+            "avatar" => "image",
+            "bio" => "json",
         ];
     }
 }

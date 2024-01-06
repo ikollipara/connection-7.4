@@ -7,25 +7,35 @@ use Illuminate\Support\Facades\Auth;
 
 class SessionController extends Controller
 {
+    /**
+     * Show Creation Form
+     *
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function create()
     {
         if ($this->current_user()) {
-            return redirect()->route('home');
+            return redirect()->route("home");
         }
-        return view('sessions.create');
+        return view("sessions.create");
     }
 
-    public function store(LoginRequest $request)
-    {
-        if (Auth::attempt($request->validated())) {
+    public function store(
+        LoginRequest $request
+    ): \Illuminate\Http\RedirectResponse {
+        if (auth()->attempt($request->validated())) {
             $request->session()->regenerate();
-            return redirect()->route('home');
+            return redirect()->route("home");
+        } else {
+            return redirect()
+                ->route("login")
+                ->withErrors("error", "Invalid credentials!");
         }
     }
 
-    public function destroy()
+    public function destroy(): \Illuminate\Http\RedirectResponse
     {
-        Auth::logout();
-        return redirect()->route('index');
+        auth()->logout();
+        return redirect()->route("index");
     }
 }

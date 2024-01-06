@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -15,7 +16,7 @@ trait HasLikes
     /**
      * Get the total number of likes for the item.
      */
-    public function likes()
+    public function likes(): int
     {
         return DB::table($this->likeTable)
             ->where($this->likeColumn, $this->id)
@@ -29,7 +30,7 @@ trait HasLikes
      * the column name is provided by a protected
      * variable named $likeColumn.
      */
-    public function isLikedBy($user)
+    public function isLikedBy(User $user): bool
     {
         return DB::table($this->likeTable)
             ->where("user_id", $user->id)
@@ -44,7 +45,7 @@ trait HasLikes
      * the column name is provided by a protected
      * variable named $likeColumn.
      */
-    public function like($user)
+    public function like(User $user): void
     {
         DB::table($this->likeTable)->insert([
             "user_id" => $user->id,
@@ -61,7 +62,7 @@ trait HasLikes
      * the column name is provided by a protected
      * variable named $likeColumn.
      */
-    public function unlike($user)
+    public function unlike(User $user): void
     {
         DB::table($this->likeTable)
             ->where("user_id", $user->id)

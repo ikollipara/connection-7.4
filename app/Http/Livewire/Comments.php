@@ -11,13 +11,20 @@ class Comments extends Component
 
     public string $comment_body;
 
+    /** @var array<string> */
     protected $listeners = ["commentAdded"];
 
-    public function mount($item)
+    /**
+     * @param \App\Models\Post|\App\Models\PostCollection $item
+     */
+    public function mount($item): void
     {
         $this->item = $item;
     }
 
+    /**
+     * @return array<string, string|array<string>>
+     */
     public function rules()
     {
         return [
@@ -25,11 +32,12 @@ class Comments extends Component
         ];
     }
 
-    public function save()
+    public function save(): void
     {
         $this->validate();
         $comment = $this->item->comments()->make([
-            "body" => "{$this->comment_body}",
+            "body" => $this->comment_body,
+            /** @phpstan-ignore-next-line */
             "user_id" => auth()->user()->id,
         ]);
         if ($comment->save()) {
@@ -44,12 +52,15 @@ class Comments extends Component
         }
     }
 
-    public function commentAdded($commentId)
+    public function commentAdded(string $commentId): void
     {
         $this->comment_body = "";
         $this->item->refresh();
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     */
     public function render()
     {
         return view("livewire.comments");

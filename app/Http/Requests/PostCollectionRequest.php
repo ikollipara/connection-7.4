@@ -19,16 +19,16 @@ class PostCollectionRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array
+     * @return array<string, string|array<string>>
      */
     public function rules()
     {
         return [
-            'title' => 'required_if:published,true',
-            'published' => 'required|boolean',
-            'body' => 'required_if:published,true|json',
-            'user_id' => 'required|exists:users,id',
-            'metadata' => 'required_if:published,true|json',
+            "title" => "required_if:published,true",
+            "published" => "required|boolean",
+            "body" => "required_if:published,true|json",
+            "user_id" => "required|exists:users,id",
+            "metadata" => "required_if:published,true|json",
         ];
     }
 }
