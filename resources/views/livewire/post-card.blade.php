@@ -24,7 +24,11 @@
     <tbody>
       <tr class="content is-italic">
         <td>Last Updated</td>
-        <td>{{ $this->post->updated_at->toFormattedDateString() }}</td>
+        @if ($this->post->updated_at)
+          <td>{{ $this->post->updated_at->toFormattedDateString() }}</td>
+        @else
+          <td></td>
+        @endif
       </tr>
       @if ($this->post->published)
         <tr class="content is-italic">

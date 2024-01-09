@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "algolia/algoliasearch-client-php": "^3.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.75",
@@ -14,8 +15,6 @@
         "laravel/tinker": "^2.5",
         "livewire/livewire": "^2.12",
         "mallardduck/blade-lucide-icons": "^1.8",
-        "teamtnt/laravel-scout-tntsearch-driver": "^13.2",
-        "teamtnt/tntsearch": "^4.2",
         "tightenco/ziggy": "^1.8"
     },
     "require-dev": {

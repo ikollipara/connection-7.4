@@ -34,9 +34,7 @@ class Search extends Component
 
     public function mount(): void
     {
-        if ($this->query) {
-            $this->search();
-        }
+        $this->search();
     }
 
     /**

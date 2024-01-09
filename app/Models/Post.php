@@ -114,6 +114,11 @@ class Post extends Model implements Likable, Viewable
         ];
     }
 
+    public function searchableAs(): string
+    {
+        return "posts_index";
+    }
+
     /**
      * Determine if the model should be searchable.
      *

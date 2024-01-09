@@ -122,6 +122,11 @@ class PostCollection extends Model implements Likable, Viewable
         ];
     }
 
+    public function searchableAs(): string
+    {
+        return "post_collections_index";
+    }
+
     /**
      * Determine if the model should be searchable.
      *

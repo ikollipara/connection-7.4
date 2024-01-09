@@ -17,7 +17,11 @@
     <tbody>
       <tr class="content is-italic">
         <td>Last Updated</td>
-        <td>{{ $this->collection->updated_at->toFormattedDateString() }}</td>
+        @if ($this->collection->updated_at)
+          <td>{{ $this->collection->updated_at->toFormattedDateString() }}</td>
+        @else
+          <td></td>
+        @endif
       </tr>
       @if ($this->collection->published)
         <tr class="content is-italic">

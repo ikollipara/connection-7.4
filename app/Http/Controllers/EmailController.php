@@ -17,7 +17,7 @@ class EmailController extends Controller
     ): \Illuminate\Http\RedirectResponse {
         $request->fulfill();
 
-        return redirect()->to(route("users.index"));
+        return redirect()->to(route("home"));
     }
 
     public function resend(Request $request): \Illuminate\Http\RedirectResponse

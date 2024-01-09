@@ -24,9 +24,9 @@ mix
   })
 
 if (mix.inProduction()) {
-  mix.purgeCss()
+  mix
   .polyfill()
   .compress({
-    useBrotli: true,
+    useGzip: true
   })
 }
