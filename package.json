@@ -44,6 +44,7 @@
     },
     "dependencies": {
         "alpinejs": "^3.13.3",
-        "slim-select": "^2.6.0"
+        "slim-select": "^2.6.0",
+        "turbolinks": "^5.2.0"
     }
 }
