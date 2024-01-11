@@ -1,7 +1,7 @@
 <x-layout title="ConneCTION - Reset Password">
   <form action="{{ route('password.update') }}" method="post">
     @csrf
-    <input type="hidden" name="token" value="{{ $request->route('token') }}">
+    <input type="hidden" name="token" value="{{ $token }}">
     <x-forms.password label="Password" name="password" x-ref="password" />
     <ul style="list-style: circle; list-style-position:inside;" class="column is-fullwidth">
       <li ::class="/^(?=.*[0-9])/.test($refs.password) ? 'has-text-success' : 'has-text-danger'">
