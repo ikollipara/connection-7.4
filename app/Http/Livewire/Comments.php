@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Comment;
+use App\Notifications\CommentAdded;
 use Livewire\Component;
 
 class Comments extends Component
@@ -41,7 +43,7 @@ class Comments extends Component
             "user_id" => auth()->user()->id,
         ]);
         if ($comment->save()) {
-            $this->emit("commentAdded", $comment->id);
+            $this->emit("commentAdded", $comment);
             $this->dispatchBrowserEvent("success", [
                 "message" => "Commented successfully!",
             ]);
@@ -52,10 +54,20 @@ class Comments extends Component
         }
     }
 
-    public function commentAdded(string $commentId): void
+    public function commentAdded(Comment $comment): void
     {
         $this->comment_body = "";
         $this->item->refresh();
+        $author = $comment->user;
+        if (($user = $this->item->user) and $author) {
+            $user->notify(
+                new CommentAdded(
+                    $comment,
+                    $author,
+                    $this->item instanceof \App\Models\Post,
+                ),
+            );
+        }
     }
 
     /**
