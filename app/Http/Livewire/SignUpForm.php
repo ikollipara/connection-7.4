@@ -74,7 +74,7 @@ class SignUpForm extends Component
         ]);
         if ($user->save()) {
             if ($this->avatar) {
-                $avatar = $this->avatar->store("avatars");
+                $avatar = $this->avatar->store("avatars", "public");
                 if ($avatar) {
                     $user->avatar = $avatar;
                     $user->save();

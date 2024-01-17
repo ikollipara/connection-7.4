@@ -20,3 +20,5 @@ cov
 *.js.br
 *.js.gz
 *.LICENSE.txt
+public/js/*.js
+public/css/*.css

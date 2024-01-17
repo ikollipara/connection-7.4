@@ -97,6 +97,7 @@ class Settings extends Component
         if ($this->avatar) {
             $avatar = $this->avatar->store("avatars", "public");
             if ($avatar) {
+                Storage::delete($user->avatar);
                 $user->avatar = $avatar;
             }
         }

@@ -19,7 +19,7 @@ class FileUploadController extends Controller
         $path = false;
         if ($file = $request->file("file") ?? $request->file("image")) {
             if ($file instanceof UploadedFile) {
-                $path = $file->store("public/files");
+                $path = $file->store("files", "public");
             }
         }
 

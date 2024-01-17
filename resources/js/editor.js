@@ -1,13 +1,15 @@
+import axios from "axios";
 
 export default (readOnly, cannotUpload, csrf, body) => ({
         async init() {
+            this.imagesToDelete = [];
             await Promise.all([
                 /* webpackPreload: true */ import("@editorjs/editorjs"),
                 import("@editorjs/header"),
                 import("@editorjs/attaches"),
                 import("@editorjs/delimiter"),
                 import("@editorjs/embed"),
-                import("@editorjs/image"),
+                import("./image-override"),
                 import("@editorjs/nested-list"),
                 import("@editorjs/quote"),
                 import("@editorjs/table"),
@@ -62,6 +64,7 @@ export default (readOnly, cannotUpload, csrf, body) => ({
                                 additionalRequestHeaders: {
                                     "X-CSRF-TOKEN": csrf,
                                 },
+                                imagesToDelete: this.imagesToDelete,
                             },
                         };
                         tools["attaches"] = {
@@ -84,13 +87,16 @@ export default (readOnly, cannotUpload, csrf, body) => ({
                         onChange: async (api, event) => {
                             this.$dispatch("editor-changed");
                             console.log(event);
-                            console.log(event.detail.target);
-                            console.log(JSON.stringify(event.detail.target.config.data));
+                            console.log(this.imagesToDelete);
                             this.body = JSON.stringify(await api.saver.save());
                         },
                     });
                 }
             );
+        },
+
+        ['x-on:editor-saved']() {
+            Promise.allSettled(this.imagesToDelete.map(path => axios.post(route('upload.destroy'), { path }))).finally(() => this.imagesToDelete.length = 0)
         },
 
         async save() {
