@@ -30,27 +30,27 @@
       <section class="modal-card-body">
         <div class="field">
           <div class="control">
-            <x-forms.grades multiple wire:model="metadata.grades" />
+            <x-forms.grades multiple wire:model="grades" />
           </div>
         </div>
         <div class="field">
           <div class="control">
-            <x-forms.standards multiple wire:model="metadata.standards" />
+            <x-forms.standards multiple wire:model="standards" />
           </div>
         </div>
         <div class="field">
           <div class="control">
-            <x-forms.practices multiple wire:model="metadata.practices" />
+            <x-forms.practices multiple wire:model="practices" />
           </div>
         </div>
         <div class="field">
           <div class="control">
-            <x-forms.categories wire:model="metadata.category" />
+            <x-forms.categories wire:model="category" />
           </div>
         </div>
         <div class="field">
           <div class="control">
-            <x-forms.audiences wire:model="metadata.audience" />
+            <x-forms.audiences wire:model="audience" />
           </div>
         </div>
       </section>
