@@ -78,7 +78,10 @@ class Search extends Component
         } elseif ($this->type === "post") {
             $this->results = array_map(
                 /** @phpstan-ignore-next-line */
-                fn(array $post_array) => $this->fillUserFullName($post_array),
+                function (array $post_array) {
+                    $post_array["type"] = "post";
+                    return $this->fillUserFullName($post_array);
+                },
                 Post::search($this->query)
                     ->get()
                     ->toArray(),
@@ -86,9 +89,10 @@ class Search extends Component
         } elseif ($this->type === "collection") {
             $this->results = array_map(
                 /** @phpstan-ignore-next-line */
-                fn(array $collection_array) => $this->fillUserFullName(
-                    $collection_array,
-                ),
+                function (array $collection_array) {
+                    $collection_array["type"] = "collection";
+                    return $this->fillUserFullName($collection_array);
+                },
                 PostCollection::search($this->query)
                     ->get()
                     ->toArray(),
