@@ -12,12 +12,9 @@ class Search extends Component
     /**
      * @var array<string, array<string, string>>
      */
-    protected $queryString = [
-        "query" => ["as" => "q"],
-    ];
 
     /** @var string */
-    public $query;
+    public $query = "";
     public string $type = "";
     /** @var array<array<string, mixed>> */
     public array $results = [];
@@ -81,7 +78,7 @@ class Search extends Component
         } elseif ($this->type === "post") {
             $this->results = array_map(
                 /** @phpstan-ignore-next-line */
-                fn (array $post_array) => $this->fillUserFullName($post_array),
+                fn(array $post_array) => $this->fillUserFullName($post_array),
                 Post::search($this->query)
                     ->get()
                     ->toArray(),
@@ -89,7 +86,7 @@ class Search extends Component
         } elseif ($this->type === "collection") {
             $this->results = array_map(
                 /** @phpstan-ignore-next-line */
-                fn (array $collection_array) => $this->fillUserFullName(
+                fn(array $collection_array) => $this->fillUserFullName(
                     $collection_array,
                 ),
                 PostCollection::search($this->query)
@@ -105,7 +102,7 @@ class Search extends Component
                  * @param array<string, array<string, mixed>> $item
                  */
                 function (array $item) {
-                    count(
+                    return count(
                         /** @phpstan-ignore-next-line */
                         array_intersect(
                             $item["metadata"]["standards"],
@@ -122,7 +119,7 @@ class Search extends Component
                  * @param array<string, array<string, mixed>> $item
                  */
                 function (array $item) {
-                    count(
+                    return count(
                         /** @phpstan-ignore-next-line */
                         array_intersect(
                             $item["metadata"]["practices"],
@@ -139,7 +136,7 @@ class Search extends Component
                  * @param array<string, array<string, mixed>> $item
                  */
                 function (array $item) {
-                    count(
+                    return count(
                         /** @phpstan-ignore-next-line */
                         array_intersect(
                             $item["metadata"]["grades"],
@@ -152,7 +149,7 @@ class Search extends Component
         if ($this->categories) {
             $this->results = array_filter(
                 $this->results,
-                fn (array $item) => in_array(
+                fn(array $item) => in_array(
                     $item["metadata"]["category"],
                     $this->categories,
                 ),
@@ -161,7 +158,7 @@ class Search extends Component
         if ($this->audiences) {
             $this->results = array_filter(
                 $this->results,
-                fn (array $item) => in_array(
+                fn(array $item) => in_array(
                     $item["metadata"]["audiences"],
                     $this->audiences,
                 ),

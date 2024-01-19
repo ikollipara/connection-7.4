@@ -12,7 +12,9 @@
       @error('query')
         <p class="help is-danger">{{ $message }}</p>
       @enderror
-      <div class="control"><button wire:loading.class="is-loading" class="button is-primary">Search</button></div>
+      <div class="control">
+        <button wire:loading.class="is-loading" class="button is-primary">Search</button>
+      </div>
       <div class="control">
         <div class="select">
           <select wire:model.lazy="type">
