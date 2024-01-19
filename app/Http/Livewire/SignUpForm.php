@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -87,6 +88,7 @@ class SignUpForm extends Component
             $this->dispatchBrowserEvent("success", [
                 "message" => "You have successfully signed up!",
             ]);
+            Log::info("User {$user->id} signed up.");
             return redirect()->route("home");
         } else {
             $this->dispatchBrowserEvent("error", [

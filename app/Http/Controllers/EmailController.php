@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class EmailController extends Controller
 {
@@ -16,8 +17,8 @@ class EmailController extends Controller
         EmailVerificationRequest $request
     ): \Illuminate\Http\RedirectResponse {
         $request->fulfill();
-
-        return redirect()->to(route("home"));
+        Log::info("Email verified for user {$request->user()->id}.");
+        return redirect()->route("home");
     }
 
     public function resend(Request $request): \Illuminate\Http\RedirectResponse
@@ -26,6 +27,8 @@ class EmailController extends Controller
         $user = $request->user();
 
         $user->sendEmailVerificationNotification();
+
+        Log::info("Verification link resent for user {$user->id}.");
 
         return back()->with("message", "Verification link sent!");
     }

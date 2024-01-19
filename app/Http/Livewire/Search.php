@@ -34,7 +34,6 @@ class Search extends Component
 
     public function mount(): void
     {
-        $this->search();
     }
 
     /**
@@ -103,12 +102,15 @@ class Search extends Component
             $this->results = array_filter(
                 $this->results,
                 /**
-                 * @param array<string, mixed> $item
+                 * @param array<string, array<string, mixed>> $item
                  */
                 function (array $item) {
                     count(
                         /** @phpstan-ignore-next-line */
-                        array_intersect($item["standards"], $this->standards),
+                        array_intersect(
+                            $item["metadata"]["standards"],
+                            $this->standards,
+                        ),
                     ) > 0;
                 },
             );
@@ -117,12 +119,15 @@ class Search extends Component
             $this->results = array_filter(
                 $this->results,
                 /**
-                 * @param array<string, mixed> $item
+                 * @param array<string, array<string, mixed>> $item
                  */
                 function (array $item) {
                     count(
                         /** @phpstan-ignore-next-line */
-                        array_intersect($item["practices"], $this->practices),
+                        array_intersect(
+                            $item["metadata"]["practices"],
+                            $this->practices,
+                        ),
                     ) > 0;
                 },
             );
@@ -131,12 +136,15 @@ class Search extends Component
             $this->results = array_filter(
                 $this->results,
                 /**
-                 * @param array<string, mixed> $item
+                 * @param array<string, array<string, mixed>> $item
                  */
                 function (array $item) {
                     count(
                         /** @phpstan-ignore-next-line */
-                        array_intersect($item["grades"], $this->grades),
+                        array_intersect(
+                            $item["metadata"]["grades"],
+                            $this->grades,
+                        ),
                     ) > 0;
                 },
             );
@@ -145,7 +153,7 @@ class Search extends Component
             $this->results = array_filter(
                 $this->results,
                 fn (array $item) => in_array(
-                    $item["category"],
+                    $item["metadata"]["category"],
                     $this->categories,
                 ),
             );
@@ -154,7 +162,7 @@ class Search extends Component
             $this->results = array_filter(
                 $this->results,
                 fn (array $item) => in_array(
-                    $item["audiences"],
+                    $item["metadata"]["audiences"],
                     $this->audiences,
                 ),
             );
