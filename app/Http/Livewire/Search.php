@@ -159,7 +159,7 @@ class Search extends Component
             $this->results = array_filter(
                 $this->results,
                 fn(array $item) => in_array(
-                    $item["metadata"]["audiences"],
+                    $item["metadata"]["audience"],
                     $this->audiences,
                 ),
             );
