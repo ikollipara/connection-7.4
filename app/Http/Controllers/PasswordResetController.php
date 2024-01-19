@@ -37,7 +37,7 @@ class PasswordResetController extends Controller
             "token" => "required",
             "email" => "required|email",
             "password" =>
-                "required|confirmed|regex:/^(?=.*[1-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()]).{12,}$/",
+                "required|confirmed|regex:/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()]).{12,}$/",
         ]);
 
         /** @var string */
@@ -48,10 +48,10 @@ class PasswordResetController extends Controller
                 "password_confirmation",
                 "token",
             ),
-            function ($user, $request) {
+            function ($user, $password) {
                 $user
                     ->forceFill([
-                        "password" => Hash::make($request->password),
+                        "password" => Hash::make($password),
                     ])
                     ->setRememberToken(Str::random(60));
 
