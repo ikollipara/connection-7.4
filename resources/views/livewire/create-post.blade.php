@@ -59,7 +59,8 @@
           class="button is-primary is-outlined">
           Cancel
         </button>
-        <button x-on:click="showModal = false" class="button is-primary">Publish</button>
+        <button wire:loading.class='is-loading' x-on:click="showModal = false"
+          class="button is-primary">Publish</button>
       </footer>
     </article>
   </section>

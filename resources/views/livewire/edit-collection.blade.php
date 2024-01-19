@@ -105,12 +105,14 @@
             class="button is-primary is-outlined">
             Cancel
           </button>
-          <button @@click="showModal = false" class="button is-primary">Publish</button>
+          <button wire:loading.class='is-loading' @@click="showModal = false"
+            class="button is-primary">Publish</button>
         @else
           <button type="button" x-on:click="showModal = false" class="button is-primary is-outlined">
             Cancel
           </button>
-          <button type="submit" x-on:click="showModal = false" class="button is-primary">Update</button>
+          <button wire:loading.class='is-loading' type="submit" x-on:click="showModal = false"
+            class="button is-primary">Update</button>
         @endif
       </footer>
     </article>

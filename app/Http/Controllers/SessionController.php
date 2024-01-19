@@ -28,7 +28,7 @@ class SessionController extends Controller
             return redirect()->route("home");
         } else {
             return redirect()
-                ->route("login")
+                ->route("login.create")
                 ->withErrors("error", "Invalid credentials!");
         }
     }

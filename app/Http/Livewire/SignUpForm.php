@@ -58,7 +58,10 @@ class SignUpForm extends Component
         $this->validateOnly($propertyName);
     }
 
-    public function save(): RedirectResponse
+    /**
+     * @return \Illuminate\Http\RedirectResponse|void
+     */
+    public function save()
     {
         $this->validate();
         $user = new User([
@@ -89,7 +92,6 @@ class SignUpForm extends Component
             $this->dispatchBrowserEvent("error", [
                 "message" => "There was an error in your sign up. Try again.",
             ]);
-            return redirect()->back(303, []);
         }
     }
 
