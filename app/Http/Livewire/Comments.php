@@ -4,6 +4,8 @@ namespace App\Http\Livewire;
 
 use App\Models\Comment;
 use App\Notifications\CommentAdded;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class Comments extends Component
@@ -12,9 +14,6 @@ class Comments extends Component
     public $item;
 
     public string $comment_body;
-
-    /** @var array<string> */
-    protected $listeners = ["commentAdded"];
 
     /**
      * @param \App\Models\Post|\App\Models\PostCollection $item
@@ -34,6 +33,18 @@ class Comments extends Component
         ];
     }
 
+    /**
+     *
+     * @return Collection<Comment>
+     */
+    public function getCommentsProperty()
+    {
+        return $this->item
+            ->comments()
+            ->with("user")
+            ->get();
+    }
+
     public function save(): void
     {
         $this->validate();
@@ -43,30 +54,24 @@ class Comments extends Component
             "user_id" => auth()->user()->id,
         ]);
         if ($comment->save()) {
-            $this->emit("commentAdded", $comment);
+            $this->comment_body = "";
             $this->dispatchBrowserEvent("success", [
                 "message" => "Commented successfully!",
             ]);
+            $commenter = $comment->user;
+            if (($user = $this->item->user) and $commenter) {
+                $user->notify(
+                    new CommentAdded(
+                        $comment,
+                        $commenter,
+                        $this->item instanceof \App\Models\Post,
+                    ),
+                );
+            }
         } else {
             $this->dispatchBrowserEvent("error", [
                 "message" => "Comment could not be saved!",
             ]);
-        }
-    }
-
-    public function commentAdded(Comment $comment): void
-    {
-        $this->comment_body = "";
-        $this->item->refresh();
-        $author = $comment->user;
-        if (($user = $this->item->user) and $author) {
-            $user->notify(
-                new CommentAdded(
-                    $comment,
-                    $author,
-                    $this->item instanceof \App\Models\Post,
-                ),
-            );
         }
     }
 

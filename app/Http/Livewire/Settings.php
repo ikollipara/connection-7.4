@@ -107,6 +107,7 @@ class Settings extends Component
             if ($this->avatar) {
                 $this->emit("avatarUpdated", $user->avatar_url());
             }
+            $this->user->refresh();
             $this->reset_form();
         } else {
             $this->emit("error", ["message" => "Failed to update!"]);

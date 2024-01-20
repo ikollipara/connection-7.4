@@ -82,20 +82,45 @@ Route::middleware("auth")->group(function () {
         ->name("posts.index")
         ->withTrashed()
         ->middleware("verified");
-    Route::resource("/posts", PostsController::class)
-        ->only(["create", "show", "edit"])
+    Route::get("/posts/create", [PostsController::class, "create"])
+        ->name("posts.create")
+        ->middleware("verified");
+    Route::get("/posts/{post}", [PostsController::class, "show"])
+        ->name("posts.show")
+        ->withTrashed()
+        ->middleware("verified");
+    Route::get("/posts/{post}/edit", [PostsController::class, "edit"])
+        ->name("posts.edit")
+        ->withTrashed()
         ->middleware("verified");
     Route::get("/posts/{post}/comments", [
         PostCommentsController::class,
         "index",
     ])
         ->name("posts.comments.index")
+        ->withTrashed()
         ->middleware("verified");
 
     // Post Collection Routes
-    Route::resource("collections", PostCollectionsController::class)
-        ->parameters(["collections" => "post_collection"])
-        ->only(["create", "show", "edit"])
+    Route::get("/collections/create", [
+        PostCollectionsController::class,
+        "create",
+    ])
+        ->name("collections.create")
+        ->middleware("verified");
+    Route::get("/collections/{post_collection}", [
+        PostCollectionsController::class,
+        "show",
+    ])
+        ->name("collections.show")
+        ->withTrashed()
+        ->middleware("verified");
+    Route::get("/collections/{post_collection}/edit", [
+        PostCollectionsController::class,
+        "edit",
+    ])
+        ->name("collections.edit")
+        ->withTrashed()
         ->middleware("verified");
     Route::get("/collections", [PostCollectionsController::class, "index"])
         ->name("collections.index")
@@ -106,6 +131,7 @@ Route::middleware("auth")->group(function () {
         "index",
     ])
         ->name("collections.comments.index")
+        ->withTrashed()
         ->middleware("verified");
 
     Route::delete("/logout", [SessionController::class, "destroy"])->name(

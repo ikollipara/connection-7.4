@@ -8,10 +8,11 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 
 class CommentAdded extends Notification
 {
-    use Queueable;
+    // use Queueable;
 
     public Comment $comment;
     public User $commenter;

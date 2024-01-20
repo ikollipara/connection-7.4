@@ -14,14 +14,14 @@
       </div>
       <div class="field">
         <span class="control">
-          <button class="button is-primary" type="submit">Comment</button>
+          <button wire:loading.class='is-loading' class="button is-primary" type="submit">Comment</button>
         </span>
       </div>
     </article>
   </form>
   <section>
-    @foreach ($this->item->comments as $comment)
-      <article class="media">
+    @foreach ($this->comments as $comment)
+      <article wire:key='comment-{{ $comment->id }}' class="media">
         <figure class="media-left">
           <p class="image is-64x64">
             <img src="{{ $comment->user->avatar_url() }}" alt="">
@@ -39,7 +39,7 @@
             <br>
             {{ $comment->body }}
           </p>
-          @livewire('likes', ['likable' => $comment])
+          @livewire('likes', ['likable' => $comment], key('likes' . $comment->id))
         </section>
       </article>
     @endforeach
