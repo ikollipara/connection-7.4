@@ -1,4 +1,4 @@
-<form x-on:submit="currentStep = 0" class="mt-5 mb-5" x-data="{ currentStep: 0 }" enctype="multipart/form-data"
+<form x-on:submit="currentStep = 0" class="mt-5 mb-5" x-data="{ currentStep: 0 }" enctype="multipart/form-data" method="post"
   wire:submit.prevent="save">
   @if (session('status'))
     <div class="notification is-danger">

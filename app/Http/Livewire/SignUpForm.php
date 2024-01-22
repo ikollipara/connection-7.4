@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -30,7 +31,7 @@ class SignUpForm extends Component
     /** @var array<string, array<string>|string> */
     protected $rules = [
         "bio" => ["json", "required"],
-        "avatar" => ["image"],
+        "avatar" => ["image", "nullable"],
         "grades" => ["array", "required"],
         "subject" => ["required"],
         "school" => ["required"],
@@ -64,16 +65,16 @@ class SignUpForm extends Component
      */
     public function save()
     {
-        $this->validate();
+        $data = $this->validate();
         $user = new User([
-            "first_name" => $this->first_name,
-            "last_name" => $this->last_name,
-            "email" => $this->email,
-            "password" => $this->password,
-            "bio" => $this->bio,
-            "grades" => $this->grades,
-            "school" => $this->school,
-            "subject" => $this->subject,
+            "first_name" => $data["first_name"],
+            "last_name" => $data["last_name"],
+            "email" => $data["email"],
+            "password" => $data["password"],
+            "bio" => json_decode($data["bio"], true),
+            "grades" => $data["grades"],
+            "school" => $data["school"],
+            "subject" => $data["subject"],
             "gender" => "",
         ]);
         if ($user->save()) {
@@ -91,9 +92,7 @@ class SignUpForm extends Component
             Log::info("User {$user->id} signed up.");
             return redirect()->route("home");
         } else {
-            $this->dispatchBrowserEvent("error", [
-                "message" => "There was an error in your sign up. Try again.",
-            ]);
+            Session::flash("status", "Something went wrong!");
         }
     }
 
