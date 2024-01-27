@@ -35,6 +35,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         "grades",
         "email",
         "password",
+        "no_comment_notifications",
     ];
 
     /**
@@ -53,6 +54,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         "email_verified_at" => "datetime",
         "bio" => "array",
         "grades" => "array",
+        "no_comment_notifications" => "boolean",
     ];
 
     /**

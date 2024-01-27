@@ -59,7 +59,11 @@ class Comments extends Component
                 "message" => "Commented successfully!",
             ]);
             $commenter = $comment->user;
-            if (($user = $this->item->user) and $commenter) {
+            if (
+                ($user = $this->item->user) and
+                $commenter and
+                !$user->no_comment_notifications
+            ) {
                 $user->notify(
                     new CommentAdded(
                         $comment,

@@ -31,6 +31,8 @@ class Settings extends Component
 
     public User $user;
 
+    public bool $no_comment_notifications;
+
     public function mount(): void
     {
         $user = auth()->user();
@@ -46,6 +48,7 @@ class Settings extends Component
             "school" => $user->school,
             "subject" => $user->subject,
             "grades" => $user->grades,
+            "no_comment_notifications" => $user->no_comment_notifications,
         ]);
     }
 
@@ -63,6 +66,7 @@ class Settings extends Component
             "school" => ["string", "required"],
             "grades" => ["array", "required"],
             "avatar" => ["image", "nullable"],
+            "no_comment_notifications" => ["boolean", "nullable"],
         ];
     }
 
@@ -76,6 +80,7 @@ class Settings extends Component
             "school" => $this->user->school,
             "subject" => $this->user->subject,
             "grades" => $this->user->grades,
+            "no_comment_notifications" => $this->user->no_comment_notifications,
         ]);
         $this->avatar = null;
     }
@@ -93,6 +98,7 @@ class Settings extends Component
             "school" => $this->school,
             "grades" => $this->grades,
             "bio" => json_decode($this->bio, true),
+            "no_comment_notifications" => $this->no_comment_notifications,
         ]);
         if ($this->avatar) {
             $avatar = $this->avatar->store("avatars", "public");

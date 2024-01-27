@@ -33,6 +33,10 @@
     <x-forms.input wire:model="school" label="School" name="school" />
     <x-forms.input wire:model="subject" label="Subject" name="subject" />
     <x-forms.grades multiple wire:model="grades" label="grades" name="grades" />
+    <label class="checkbox">
+      <input type="checkbox" wire:model='no_comment_notifications'>
+      I do not want to recieve comment notifications
+    </label>
     <div class="buttons mt-5">
       <button type="submit" class="button is-primary">Update</button>
       <button wire:click="reset_form" type="button" class="button is-danger is-outlined">Cancel</button>
