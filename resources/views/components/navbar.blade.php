@@ -58,6 +58,7 @@
             x-bind:class="{ 'is-hidden': !show, 'is-danger': !saved, 'is-success': saved }" x-text="text"
             class="notification pt-1 pb-1"></div>
         </div>
+        <a href="{{ route('faq') }}" class="navbar-item mt-2 mb-2">FAQ/Help</a>
         <a href="{{ URL::route('search') }}" class="navbar-item mt-2 mb-2">Search</a>
         <a href="{{ URL::route('users.edit', ['user' => auth()->user()]) }}" class="navbar-item mt-2 mb-2">Settings</a>
         <li class="navbar-item">

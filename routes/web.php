@@ -64,6 +64,9 @@ Route::post("/reset-password", [PasswordResetController::class, "update"])
 
 Route::middleware("auth")->group(function () {
     Route::get("/home", [HomeController::class, "index"])->name("home");
+    Route::view("/faq", "faq")
+        ->name("faq")
+        ->middleware("verified");
     Route::view("/search", "search")
         ->name("search")
         ->middleware("verified");
