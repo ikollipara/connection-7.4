@@ -39,31 +39,31 @@ Alpine.data("slimSelect", slimSelect);
 
 Alpine.start()
 
-import { toast } from "bulma-toast";
+import("bulma-toast").then(({ toast }) => {
+    window.toast = toast;
+    window.success = (message) => {
+        toast({
+            message: message,
+            type: 'is-success',
+            dismissible: true,
+            duration: 3000,
+            animate: {in: 'fadeIn', out: 'fadeOut'},
+        });
+    };
+    window.error = (message) => {
+        toast({
+            message: message,
+            type: 'is-danger',
+            dismissible: true,
+            duration: 3000,
+            animate: {in: 'fadeIn', out: 'fadeOut'},
+        });
+    }
 
-window.toast = toast;
-window.success = (message) => {
-    toast({
-        message: message,
-        type: 'is-success',
-        dismissible: true,
-        duration: 3000,
-        animate: {in: 'fadeIn', out: 'fadeOut'},
+    document.addEventListener('success', event => {
+        window.success(event.detail.message)
     });
-};
-window.error = (message) => {
-    toast({
-        message: message,
-        type: 'is-danger',
-        dismissible: true,
-        duration: 3000,
-        animate: {in: 'fadeIn', out: 'fadeOut'},
+    document.addEventListener('error', event => {
+        window.error(event.detail.message)
     });
-}
-
-document.addEventListener('success', event => {
-    window.success(event.detail.message)
-});
-document.addEventListener('error', event => {
-    window.error(event.detail.message)
-});
+})
