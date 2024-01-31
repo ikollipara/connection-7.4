@@ -3,7 +3,7 @@
     <h1 class="title">Frequently Asked Questions</h1>
     @livewire('submit-f-a-q-question')
   </x-hero>
-  <main class="container mt-2 content">
+  <main class="container is-fluid mt-2 content">
     <article>
       <h2 class="subtitle">How do I use ConneCTION?</h2>
       <p>
