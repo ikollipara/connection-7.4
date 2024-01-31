@@ -1,19 +1,24 @@
-<form wire:submit.prevent="save" x-data="{ showModal: false }">
+<form wire:submit.prevent="save" x-data="{ showModal: false, showHelpModal: false }">
   @csrf
   <input type="hidden" name="status" wire:model.lazy="published">
   <x-hero class="is-primary">
-    <div class="field has-addons">
-      <div class="control is-expanded">
-        <input wire:model.lazy="title"
-          @@change="document.title = `conneCTION - ${$el.value}`; $dispatch('editor-changed')"
-          placeholder="Collection Title..." type="text" class="input">
-      </div>
-      <div class="control">
-        <button type="submit" class="button is-dark">Save</button>
-      </div>
-      <div class="control">
-        <button type="button" @@click="showModal = true; $wire.published = true"
-          class="button is-light">Publish</button>
+    <div class="is-flex is-align-items-center" style="gap: 0.5rem;">
+      <button @@click='showHelpModal = true' type="button" class="button is-primary">
+        <x-lucide-help-circle class="icon" />
+      </button>
+      <div class="field has-addons" style="flex: 1">
+        <div class="control is-expanded">
+          <input placeholder="Post Title..." wire:model="title"
+            x-on:change="document.title = `conneCTION - ${$el.value}`; $dispatch('editor-changed')" type="text"
+            class="input">
+        </div>
+        <div class="control">
+          <button class="button is-dark">Save</button>
+        </div>
+        <div class="control">
+          <button type="button" x-on:click="showModal = true; $wire.is_published = true"
+            class="button is-light">Publish</button>
+        </div>
       </div>
     </div>
   </x-hero>
@@ -64,4 +69,21 @@
       </footer>
     </article>
   </section>
+  <div x-bind:class="{ 'is-active': showHelpModal }" class="modal">
+    <div @@click="showHelpModal = false" class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Collection Editor</p>
+        <button type="button" class="delete" @@click="showHelpModal = false"></button>
+      </header>
+      <section class="modal-card-body">
+        This is the collection editor! Collections don't include posts right away, but you can add them later.
+        To do this, check out the bookmark icon on the post you want to add to a collection, then click the
+        plus to add it to a collection. In this view, you can write a short description, then save to begin adding
+        items.
+        Have Fun!
+      </section>
+    </div>
+  </div>
+</form>
 </form>
