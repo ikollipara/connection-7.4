@@ -79,19 +79,17 @@
                   </td>
                 </tr>
               @endif
-              @if (array_key_exists('languages', $post->metdata))
-                @if (count($post->metadata['languages']) > 0)
-                  <tr>
-                    <td>Languages</td>
-                    <td class="level">
-                      <div class="level-left">
-                        @foreach ($post->metadata['languages'] as $language)
-                          <span class="tag">{{ $language }}</span>
-                        @endforeach
-                      </div>
-                    </td>
-                  </tr>
-                @endif
+              @if (count($post->metadata['languages']) > 0)
+                <tr>
+                  <td>Languages</td>
+                  <td class="level">
+                    <div class="level-left">
+                      @foreach ($post->metadata['languages'] as $language)
+                        <span class="tag">{{ $language }}</span>
+                      @endforeach
+                    </div>
+                  </td>
+                </tr>
               @endif
               @if (count($post->metadata['grades']) > 0)
                 <tr>
