@@ -16,6 +16,19 @@ use App\Traits\HasViews;
 use Laravel\Scout\Searchable;
 use App\Events\PostViewed;
 
+/**
+ * App\Models\Post
+ * @property string $id
+ * @property string $title
+ * @property array<string, string> $body
+ * @property array<string, string> $metadata
+ * @property bool $published
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $user
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Comment> $comments
+ */
 class Post extends Model implements Likable, Viewable
 {
     use HasFactory,
@@ -63,6 +76,8 @@ class Post extends Model implements Likable, Viewable
     protected $attributes = [
         "metadata" => '{"category": "material", "audience": "Teachers"}',
         "body" => '{"blocks": []}',
+        "title" => "",
+        "published" => false,
     ];
 
     /**
@@ -108,7 +123,10 @@ class Post extends Model implements Likable, Viewable
             "grades" => collect($this->metadata["grades"])->join(","),
             "standards" => collect($this->metadata["standards"])->join(","),
             "practices" => collect($this->metadata["practices"])->join(","),
-            "user" => $this->user ? $this->user->full_name() : "[Deleted]",
+            "languages" => collect($this->metadata["languages"])->join(","),
+            "user" => $this->user->exists()
+                ? $this->user->full_name()
+                : "[Deleted]",
             "likes" => (int) $this->likes_count,
             "views" => (int) $this->views,
         ];

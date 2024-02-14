@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\UserFollowed;
 use App\Traits\HasUuids;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Passwords\CanResetPassword as PasswordsCanResetTrait;
@@ -15,6 +16,28 @@ use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
 
+/**
+ * App\Models\User
+ * @property string $id
+ * @property string $first_name
+ * @property string $last_name
+ * @property string $avatar
+ * @property string $school
+ * @property string $subject
+ * @property string $gender
+ * @property array<string, string> $bio
+ * @property array<string> $grades
+ * @property string $email
+ * @property bool $no_comment_notifications
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Comment> $comments
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\PostCollection> $postCollections
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Post> $posts
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\User> $followers
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\User> $following
+ */
 class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
     use HasApiTokens, HasFactory, Notifiable, HasUuids, PasswordsCanResetTrait;
@@ -57,6 +80,12 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         "no_comment_notifications" => "boolean",
     ];
 
+    /** @var array<string, mixed> */
+    protected $attributes = [
+        "password" => "",
+        "gender" => "",
+    ];
+
     /**
      * Get the user's posts
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Post>
@@ -85,6 +114,78 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     }
 
     /**
+     * Get the user's followers
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\User>
+     */
+    public function followers()
+    {
+        return $this->belongsToMany(
+            User::class,
+            "followers",
+            "user_id",
+            "follower_id",
+        );
+    }
+
+    /**
+     * Get the user's following
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\User>
+     */
+    public function following()
+    {
+        return $this->belongsToMany(
+            User::class,
+            "followers",
+            "follower_id",
+            "user_id",
+        );
+    }
+
+    /**
+     * Check if the user is following another user
+     * @param User $user The user to check
+     * @return bool
+     */
+    public function follow(User $user)
+    {
+        $this->following()->attach($user->id);
+        if ($this->save()) {
+            UserFollowed::dispatch($this, $user);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Unfollow a user
+     * @param User $user The user to unfollow
+     * @return bool
+     */
+    public function unfollow(User $user)
+    {
+        $this->following()->detach($user->id);
+        if ($this->save()) {
+            UserFollowed::dispatch($this, $user);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Check if the user is following another user
+     * @param User $user The user to check
+     * @return bool
+     */
+    public function hasFollowed(User $user): bool
+    {
+        return $this->following()
+            ->where("user_id", $user->id)
+            ->exists();
+    }
+
+    /**
      * Get the user's full name.
      * @return string The User's full name
      */
@@ -93,7 +194,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         return "{$this->first_name} {$this->last_name}";
     }
 
-    public function avatar_url(): string
+    public function avatar(): string
     {
         /**
          * If the user doesn't have an avatar,

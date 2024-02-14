@@ -2,7 +2,7 @@ export default (placeholder) => ({
     selected: [],
     async init() {
         import("slim-select").then(({ default: SlimSelect }) => {
-            new SlimSelect({
+            this.slimSelect = new SlimSelect({
                 select: this.$el,
                 settings: {
                     placeholderText: placeholder ?? "",

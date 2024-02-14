@@ -1,11 +1,12 @@
 @php
-    use App\Enums\Grade;
+  use App\Enums\Grade;
 @endphp
 
 <span wire:ignore>
-    <select x-data="slimSelect('Grades...')" {{ $attributes }} name="grades" id="grades">
-        @foreach (Grade::asPairs() as $grade)
-            <option wire:key="{{ $grade[0] }}" value="{{ $grade[0] }}">{{ $grade[1] }}</option>
-        @endforeach
-    </select>
+  <select @@turbolinks:before-cache.document="slimSelect.destroy" x-data="slimSelect('Grades...')" {{ $attributes }}
+    name="grades" id="grades">
+    @foreach (Grade::asPairs() as $grade)
+      <option wire:key="{{ $grade[0] }}" value="{{ $grade[0] }}">{{ $grade[1] }}</option>
+    @endforeach
+  </select>
 </span>

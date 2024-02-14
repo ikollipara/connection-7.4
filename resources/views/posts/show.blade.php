@@ -1,20 +1,22 @@
 <x-layout title="conneCTION - {{ $post->title }}">
   <span x-data="{ showModal: false }">
     <x-hero class="is-primary">
-      <h1 class="title">{{ $post->title }}</h1>
-      <div style="display: flex; gap: 1rem; align-items:center">
-        <span class="image is-64x64">
-          <img style="width: 50px; height: 50px; object-fit:cover;" class="is-rounded"
-            src="{{ $post->user->avatar_url() }}" alt="">
-        </span>
-        <p class="is-italic content">
-          @if ($post->user)
+      <h1 class="title is-1 has-text-centered">{{ $post->title }}</h1>
+      <div
+        class="is-flex is-flex-direction-column mb-2 is-align-items-center is-justify-content-center has-text-centered"
+        style="gap: 0.5rem;">
+        <figure class="image is-64x64 is-flex is-justify-content-center is-align-items-center">
+          <img style="width: 50px; height: 50px; object-fit:cover;" class="is-rounded" src="{{ $post->user->avatar() }}"
+            alt="">
+        </figure>
+        @if ($post->user)
+          <a href="{{ route('users.show', ['user' => $post->user]) }}" class="link is-italic">
             {{ $post->user->full_name() }} - {{ $post->user->subject }} Teacher at
             {{ $post->user->school }}
-          @else
-            [Deleted]
-          @endif
-        </p>
+          </a>
+        @else
+          <p class="is-italic content">[Deleted]</p>
+        @endif
       </div>
       <div class="level" style="padding-block: 0.25rem; border-top: white 1px solid; border-bottom: white 1px solid;">
         <div class="level-left">
@@ -42,7 +44,7 @@
       </div>
     </x-hero>
     <main class="container is-fluid content mt-5">
-      <details>
+      <details class="is-clickable">
         <summary>Metadata</summary>
         <div class="table-container">
           <table class="table">
@@ -77,6 +79,20 @@
                   </td>
                 </tr>
               @endif
+              @if (array_key_exists('languages', $post->metdata))
+                @if (count($post->metadata['languages']) > 0)
+                  <tr>
+                    <td>Languages</td>
+                    <td class="level">
+                      <div class="level-left">
+                        @foreach ($post->metadata['languages'] as $language)
+                          <span class="tag">{{ $language }}</span>
+                        @endforeach
+                      </div>
+                    </td>
+                  </tr>
+                @endif
+              @endif
               @if (count($post->metadata['grades']) > 0)
                 <tr>
                   <td>Grades</td>
@@ -103,32 +119,21 @@
         </div>
       </details>
       <x-editor model="{{ Js::from($post->body) }}" name="editor" read-only />
-      <section class='modal' x-bind:class="{ 'is-active': showModal }">
-        <div class='modal-background'></div>
-        <article class='modal-card'>
-          <header class='modal-card-head'>
-            <p class='modal-card-title' style="margin-block: auto">Add to Collection</p>
-            <button @@click='showModal = false' type='button' class='delete'
-              aria-label="close"></button>
-          </header>
-          <section class='modal-card-body'>
-            <table class="table is-fullwidth">
-              <thead>
-                <tr>
-                  <th>Action</th>
-                  <th>Collection</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach (auth()->user()->postCollections as $collection)
-                  @livewire('add-collection-row', ['collection' => $collection, 'post' => $post], key($collection->id))
-                @endforeach
-              </tbody>
-            </table>
-          </section>
-        </article>
-      </section>
+      <x-modal show-var='showModal' title="Add to Collection">
+        <table class="table is-fullwidth">
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Collection</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (auth()->user()->postCollections as $collection)
+              @livewire('add-collection-row', ['collection' => $collection, 'post' => $post], key($collection->id))
+            @endforeach
+          </tbody>
+        </table>
+      </x-modal>
     </main>
-
   </span>
 </x-layout>

@@ -37,6 +37,7 @@ class SubmitFAQQuestion extends Component
         $this->dispatchBrowserEvent("success", [
             "message" => "Question submitted!",
         ]);
+        $this->dispatchBrowserEvent("question-submitted");
     }
 
     /**

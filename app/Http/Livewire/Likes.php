@@ -35,6 +35,9 @@ class Likes extends Component
         $this->likable->like($this->user);
         $this->liked = true;
         $this->likes++;
+        $this->dispatchBrowserEvent("success", [
+            "message" => __("Liked!"),
+        ]);
     }
 
     public function unlike(): void
@@ -42,6 +45,9 @@ class Likes extends Component
         $this->likable->unlike($this->user);
         $this->liked = false;
         $this->likes--;
+        $this->dispatchBrowserEvent("success", [
+            "message" => __("Unliked!"),
+        ]);
     }
 
     /**

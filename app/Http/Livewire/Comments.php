@@ -4,16 +4,20 @@ namespace App\Http\Livewire;
 
 use App\Models\Comment;
 use App\Notifications\CommentAdded;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class Comments extends Component
 {
+    use WithPagination;
+
     /** @var \App\Models\Post|\App\Models\PostCollection */
     public $item;
 
-    public string $comment_body;
+    public string $comment_body = "";
 
     /**
      * @param \App\Models\Post|\App\Models\PostCollection $item
@@ -33,31 +37,27 @@ class Comments extends Component
         ];
     }
 
-    /**
-     *
-     * @return Collection<Comment>
-     */
-    public function getCommentsProperty()
+    public function getCommentsProperty(): LengthAwarePaginator
     {
         return $this->item
             ->comments()
+            ->orderByDesc("created_at")
             ->with("user")
-            ->get();
+            ->paginate(10);
     }
 
     public function save(): void
     {
         $this->validate();
         $comment = $this->item->comments()->make([
+            "user_id" => auth()->id(),
             "body" => $this->comment_body,
-            /** @phpstan-ignore-next-line */
-            "user_id" => auth()->user()->id,
         ]);
         if ($comment->save()) {
-            $this->comment_body = "";
             $this->dispatchBrowserEvent("success", [
                 "message" => "Commented successfully!",
             ]);
+            $this->comment_body = "";
             $commenter = $comment->user;
             if (
                 ($user = $this->item->user) and

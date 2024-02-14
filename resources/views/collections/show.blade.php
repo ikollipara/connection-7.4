@@ -1,19 +1,20 @@
 <x-layout title="conneCTION - {{ $collection->title }}">
   <x-hero class="is-primary">
-    <h1 class="title">{{ $collection->title }}</h1>
-    <div style="display: flex; gap: 1rem; align-items:center">
-      <span class="image is-64x64">
+    <h1 class="title is-1 has-text-centered">{{ $collection->title }}</h1>
+    <div class="is-flex is-flex-direction-column mb-2 is-align-items-center is-justify-content-center has-text-centered"
+      style="gap: 0.5rem;">
+      <figure class="image is-64x64 is-flex is-justify-content-center is-align-items-center">
         <img style="width: 50px; height: 50px; object-fit:cover;" class="is-rounded"
-          src="{{ $collection->user->avatar_url() }}" alt="">
-      </span>
-      <p class="is-italic content">
-        @if ($collection->user)
+          src="{{ $collection->user->avatar() }}" alt="">
+      </figure>
+      @if ($collection->user)
+        <a href="{{ route('users.show', ['user' => $collection->user]) }}" class="link is-italic">
           {{ $collection->user->full_name() }} - {{ $collection->user->subject }} Teacher at
           {{ $collection->user->school }}
-        @else
-          [Deleted]
-        @endif
-      </p>
+        </a>
+      @else
+        <p class="is-italic content">[Deleted]</p>
+      @endif
     </div>
     <div class="level" style="padding-block: 0.25rem; border-top: white 1px solid; border-bottom: white 1px solid;">
       <div class="level-left">
@@ -42,7 +43,7 @@
         <li x-bind:class="{ 'is-active': tab == 1 }"><a x-on:click="tab = 1">Entries</a></li>
       </ul>
     </section>
-    <details>
+    <details class="is-clickable">
       <summary>Metadata</summary>
       <div class="table-container">
         <table class="table">
@@ -77,6 +78,18 @@
                 </td>
               </tr>
             @endif
+            @if (count($collection->metadata['languages']) > 0)
+              <tr>
+                <td>Languages</td>
+                <td class="level">
+                  <div class="level-left">
+                    @foreach ($collection->metadata['languages'] as $language)
+                      <span class="tag">{{ $language }}</span>
+                    @endforeach
+                  </div>
+                </td>
+              </tr>
+            @endif
             @if (count($collection->metadata['grades']) > 0)
               <tr>
                 <td>Grades</td>
@@ -103,9 +116,7 @@
       </div>
     </details>
     <section x-bind:class="{ 'is-hidden': tab == 1 }">
-      <span x-data="{ text: '{{ json_encode($collection->body) }}' }">
-        <x-editor x-model='text' name="editor" read-only />
-      </span>
+      <x-editor model='{{ Js::from($collection->body) }}' name="editor" read-only />
     </section>
     <section class="is-hidden" x-bind:class="{ 'is-hidden': tab == 0 }">
       <table class="table is-fullwidth">

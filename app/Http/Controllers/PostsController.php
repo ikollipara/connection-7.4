@@ -55,6 +55,10 @@ class PostsController extends Controller
             $post->view($user);
         }
 
+        if (!array_key_exists("languages", $post->metadata)) {
+            $post->metadata = array_merge($post->metadata, ["languages" => []]);
+        }
+
         return view("posts.show", ["post" => $post]);
     }
 

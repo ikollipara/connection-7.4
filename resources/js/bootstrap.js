@@ -67,3 +67,10 @@ import("bulma-toast").then(({ toast }) => {
         window.error(event.detail.message)
     });
 })
+
+document.addEventListener('post-removed', (event) => {
+    event.target.classList.add('animate__animated', 'animate__fadeOut');
+    setTimeout(() => {
+        event.target.remove();
+    }, 1000);
+})

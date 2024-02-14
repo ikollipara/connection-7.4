@@ -57,6 +57,12 @@ class PostCollectionsController extends Controller
             $postCollection->view($user);
         }
 
+        if (!array_key_exists("languages", $postCollection->metadata)) {
+            $postCollection->metadata = array_merge($postCollection->metadata, [
+                "languages" => [],
+            ]);
+        }
+
         return view("collections.show", [
             "collection" => $postCollection,
         ]);

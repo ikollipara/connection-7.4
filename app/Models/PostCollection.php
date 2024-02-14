@@ -62,6 +62,8 @@ class PostCollection extends Model implements Likable, Viewable
     protected $attributes = [
         "metadata" => '{"category": "material", "audience": "Teachers"}',
         "body" => '{"blocks": []}',
+        "published" => false,
+        "title" => "",
     ];
 
     /**
@@ -116,6 +118,7 @@ class PostCollection extends Model implements Likable, Viewable
             "grades" => collect($this->metadata["grades"])->join(","),
             "standards" => collect($this->metadata["standards"])->join(","),
             "practices" => collect($this->metadata["practices"])->join(","),
+            "languages" => collect($this->metadata["languages"])->join(","),
             "user" => $this->user ? $this->user->full_name() : "[Deleted]",
             "likes" => (int) $this->likes_count,
             "views" => (int) $this->views,
