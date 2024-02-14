@@ -110,6 +110,9 @@ class PostCollection extends Model implements Likable, Viewable
      */
     public function toSearchableArray(): array
     {
+        if (!array_key_exists("languages", $this->metadata)) {
+            $this->metadata = array_merge($this->metadata, ["languages" => []]);
+        }
         return [
             "id" => $this->id,
             "title" => $this->title,

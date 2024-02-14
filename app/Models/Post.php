@@ -115,6 +115,9 @@ class Post extends Model implements Likable, Viewable
      */
     public function toSearchableArray()
     {
+        if (!array_key_exists("languages", $this->metadata)) {
+            $this->metadata = array_merge($this->metadata, ["languages" => []]);
+        }
         return [
             "id" => $this->id,
             "title" => $this->title,
