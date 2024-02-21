@@ -26,9 +26,8 @@
       </span>
       <div class="column is-one-third"
         style="filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));">
-        <img
-          src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2342&q=80"
-          alt="" class="image" style="border-radius: 10% 0 10% 0; border: #003049 0.5rem solid;">
+        <img src="{{ mix('images/people.avif') }}" alt="" class="image" lazy="loading"
+          style="border-radius: 10% 0 10% 0; border: #003049 0.5rem solid;">
       </div>
     </section>
     <section class="column is-fullwidth mx-5">

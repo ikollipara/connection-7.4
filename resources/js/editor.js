@@ -1,4 +1,3 @@
-import axios from "axios";
 
 export default (readOnly, cannotUpload, csrf, body) => ({
         async init() {
@@ -95,8 +94,11 @@ export default (readOnly, cannotUpload, csrf, body) => ({
             );
         },
 
-        ['x-on:editor-saved']() {
-            Promise.allSettled(this.imagesToDelete.map(path => axios.post(route('upload.destroy'), { path }))).finally(() => this.imagesToDelete.length = 0)
+        persistDeletedImages() {
+            console.log(this.imagesToDelete);
+            Promise.allSettled(
+                this.imagesToDelete.map(path => window.axios.delete(route('upload.destroy'), { data: { path } }))
+                ).finally(() => this.imagesToDelete.length = 0)
         },
 
         async save() {

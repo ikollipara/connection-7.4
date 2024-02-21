@@ -1,6 +1,7 @@
 const mix = require('laravel-mix');
 require("laravel-mix-purgecss");
 require("laravel-mix-compress");
+require("laravel-mix-imagemin");
 require("laravel-mix-polyfill");
 
 /*
@@ -22,11 +23,10 @@ mix
       extensions: [".*",".wasm",".mjs",".js",".jsx",".json"]
     },
   })
+  .imagemin("images/*", { context: "resources" })
 
 if (mix.inProduction()) {
   mix
   .polyfill()
-  .compress({
-    useGzip: true
-  })
+  .version()
 }

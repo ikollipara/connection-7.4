@@ -1,4 +1,7 @@
 <x-layout title="ConneCTION - Home">
+  @push('meta')
+    <meta name="turbolinks-visit-control" content="reload">
+  @endpush
   <x-hero class="is-primary">
     <h1 class="title">Welcome to ConneCTION</h1>
   </x-hero>

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class FileUploadController extends Controller
 {
@@ -42,15 +43,17 @@ class FileUploadController extends Controller
 
     public function destroy(Request $request): void
     {
-        $request->validate([
+        $validated = $request->validate([
             "path" => "required|string",
         ]);
 
-        /** @var string */
-        $path = $request->path;
-
-        if (Storage::exists($path)) {
-            Storage::delete($path);
+        if (Str::of($validated["path"])->startsWith("/storage/")) {
+            $validated["path"] = Str::of($validated["path"])->replace(
+                "/storage/",
+                "",
+            );
         }
+
+        Storage::disk("public")->delete($validated["path"]);
     }
 }

@@ -31,7 +31,6 @@ require('turbolinks').start()
 import editor from "./editor";
 import slimSelect from "./slim-select";
 import Alpine from 'alpinejs'
-import 'animate.css';
 
 window.Alpine = Alpine
 Alpine.data("editor", editor);
@@ -39,7 +38,10 @@ Alpine.data("slimSelect", slimSelect);
 
 Alpine.start()
 
-import("bulma-toast").then(({ toast }) => {
+Promise.all([
+import('animate.css'),
+import("bulma-toast")
+]) .then(([_, { toast }]) => {
     window.toast = toast;
     window.success = (message) => {
         toast({

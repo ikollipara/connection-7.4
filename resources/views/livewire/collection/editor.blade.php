@@ -47,7 +47,7 @@
         </section>
       @endif
       <section @if ($this->post_collection->exists) x-bind:class="{ 'is-hidden': tab !== 0 }" @endif>
-        <x-editor name="body" wire:model.defer='body' />
+        <x-editor name="body" wire:model.lazy='body' />
       </section>
       @if ($this->post_collection->exists)
         <section class="is-hidden" x-bind:class="{ 'is-hidden': tab !== 1 }">

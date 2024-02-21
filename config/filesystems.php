@@ -67,6 +67,9 @@ return [
     */
 
     "links" => [
-        public_path("storage") => env("PUBLIC_PATH"),
+        public_path("storage") => env(
+            "PUBLIC_PATH",
+            storage_path("app/public"),
+        ),
     ],
 ];

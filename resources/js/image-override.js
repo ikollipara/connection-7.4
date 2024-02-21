@@ -2,8 +2,8 @@
 import  ImageTool from '@editorjs/image';
 
 export default class ImageOverride extends ImageTool {
-    constructor({ data, api, config }) {
-        super({ data, api, config });
+    constructor({ data, api, config, readOnly, block }) {
+        super({ data, api, config, readOnly, block });
         this.imagesToDelete = config.imagesToDelete || [];
     }
 

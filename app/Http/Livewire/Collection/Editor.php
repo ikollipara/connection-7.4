@@ -72,6 +72,10 @@ class Editor extends Component
     {
         // @phpstan-ignore-next-line
         $this->post_collection->body = json_decode($value, true);
+        if ($this->post_collection->exists) {
+            $this->post_collection->save();
+            $this->dispatchBrowserEvent("editor-saved");
+        }
     }
 
     public function save(): void

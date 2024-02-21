@@ -35,7 +35,7 @@
       </div>
     </x-hero>
     <main class="container is-fluid mt-5">
-      <x-editor name="body" wire:model.defer='body' />
+      <x-editor name="body" wire:model.lazy='body' />
     </main>
     <x-modal title="Set Post Metadata" show-var="show">
       <div class="field">

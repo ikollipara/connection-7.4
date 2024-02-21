@@ -35,8 +35,8 @@ class Login extends Component
         $this->validate();
 
         if (auth()->attempt($this->only(["email", "password"]))) {
-            Session::regenerate();
-            return redirect()->route("home");
+            session()->regenerate();
+            return redirect()->intended(route("home"), 303);
         } else {
             Log::info("User {$this->email} failed to log in.");
             $this->dispatchBrowserEvent("error", [

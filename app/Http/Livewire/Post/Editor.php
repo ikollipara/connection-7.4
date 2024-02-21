@@ -63,6 +63,15 @@ class Editor extends Component
         "languages" => ["array"],
     ];
 
+    public function updatedBody(string $value): void
+    {
+        $this->post->body = json_decode($value, true);
+        if ($this->post->exists) {
+            $this->post->save();
+            $this->dispatchBrowserEvent("editor-saved");
+        }
+    }
+
     public function save(): void
     {
         $this->validate();
