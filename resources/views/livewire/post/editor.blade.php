@@ -13,7 +13,7 @@
         </x-help>
         <div class="field has-addons" style="flex: 1">
           <div class="control is-expanded">
-            <input class="input" type="text" placeholder="Post Title..." wire:model.defer='post.title'
+            <input class="input" type="text" placeholder="Post Title..." wire:model.lazy='post.title'
               x-on:change="document.title = `ConneCTION - ${$el.value}`; $dispatch('editor-changed')">
           </div>
           <div class="control">

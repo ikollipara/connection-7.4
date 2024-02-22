@@ -78,6 +78,21 @@ class Editor extends Component
         }
     }
 
+    /**
+     * @param string $name
+     * @param mixed $value
+     */
+    public function updated(string $name, $value): void
+    {
+        if (
+            $name === "post_collection.title" and
+            $this->post_collection->exists
+        ) {
+            $this->post_collection->save();
+            $this->dispatchBrowserEvent("editor-saved");
+        }
+    }
+
     public function save(): void
     {
         $this->validate();

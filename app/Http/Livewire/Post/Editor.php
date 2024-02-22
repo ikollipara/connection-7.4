@@ -72,6 +72,15 @@ class Editor extends Component
         }
     }
 
+    public function updatedPostTitle(string $value): void
+    {
+        $this->post->title = $value;
+        if ($this->post->exists) {
+            $this->post->save();
+            $this->dispatchBrowserEvent("editor-saved");
+        }
+    }
+
     public function save(): void
     {
         $this->validate();

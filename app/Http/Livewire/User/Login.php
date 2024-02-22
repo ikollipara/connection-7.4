@@ -10,11 +10,13 @@ class Login extends Component
 {
     public string $email = "";
     public string $password = "";
+    public bool $remember_me = false;
 
     /** @var string[] */
     protected $rules = [
         "email" => "required|email|exists:users,email",
         "password" => "required",
+        "remember_me" => "boolean",
     ];
 
     /**
@@ -34,7 +36,12 @@ class Login extends Component
     {
         $this->validate();
 
-        if (auth()->attempt($this->only(["email", "password"]))) {
+        if (
+            auth()->attempt(
+                $this->only(["email", "password"]),
+                $this->remember_me,
+            )
+        ) {
             session()->regenerate();
             return redirect()->intended(route("home"), 303);
         } else {
