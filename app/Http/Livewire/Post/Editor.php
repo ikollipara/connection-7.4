@@ -84,6 +84,9 @@ class Editor extends Component
             "practices" => $this->practices,
             "languages" => $this->languages,
         ];
+        if (!$this->post->exists) {
+            $this->post->body = json_decode($this->body, true);
+        }
         if ($this->post->save()) {
             if (
                 $this->post->published and $this->post->wasChanged("published")

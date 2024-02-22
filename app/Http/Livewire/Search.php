@@ -47,10 +47,21 @@ class Search extends Component
         $post_query = Post::search($this->query)->query(function (
             Builder $query
         ) {
-            $query
-                ->whereJsonContains("metadata->grades", $this->grades)
-                ->whereJsonContains("metadata->standards", $this->standards)
-                ->whereJsonContains("metadata->practices", $this->practices);
+            if (count($this->grades) > 0) {
+                $query->whereJsonContains("metadata->grades", $this->grades);
+            }
+            if (count($this->standards) > 0) {
+                $query->whereJsonContains(
+                    "metadata->standards",
+                    $this->standards,
+                );
+            }
+            if (count($this->practices) > 0) {
+                $query->whereJsonContains(
+                    "metadata->practices",
+                    $this->practices,
+                );
+            }
             if (count($this->languages) > 0) {
                 $query->whereJsonContains(
                     "metadata->languages",
@@ -66,13 +77,24 @@ class Search extends Component
         });
         $collection_query = PostCollection::search($this->query)->query(
             function (Builder $query) {
-                $query
-                    ->whereJsonContains("metadata->grades", $this->grades)
-                    ->whereJsonContains("metadata->standards", $this->standards)
-                    ->whereJsonContains(
+                if (count($this->grades) > 0) {
+                    $query->whereJsonContains(
+                        "metadata->grades",
+                        $this->grades,
+                    );
+                }
+                if (count($this->standards) > 0) {
+                    $query->whereJsonContains(
+                        "metadata->standards",
+                        $this->standards,
+                    );
+                }
+                if (count($this->practices) > 0) {
+                    $query->whereJsonContains(
                         "metadata->practices",
                         $this->practices,
                     );
+                }
                 if (count($this->languages) > 0) {
                     $query->whereJsonContains(
                         "metadata->languages",

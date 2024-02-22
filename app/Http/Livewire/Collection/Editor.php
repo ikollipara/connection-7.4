@@ -90,6 +90,9 @@ class Editor extends Component
             "practices" => $this->practices,
             "languages" => $this->languages,
         ];
+        if (!$this->post_collection->exists) {
+            $this->post_collection->body = json_decode($this->body, true);
+        }
         if ($this->post_collection->save()) {
             if (
                 $this->post_collection->published and
