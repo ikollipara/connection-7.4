@@ -71,10 +71,12 @@ class Editor extends Component
     public function updatedBody(string $value): void
     {
         // @phpstan-ignore-next-line
-        $this->post_collection->body = json_decode($value, true);
-        if ($this->post_collection->exists) {
-            $this->post_collection->save();
-            $this->dispatchBrowserEvent("editor-saved");
+        if ($decoded = json_decode($value, true)) {
+            $this->post_collection->body = $decoded;
+            if ($this->post_collection->exists) {
+                $this->post_collection->save();
+                $this->dispatchBrowserEvent("editor-saved");
+            }
         }
     }
 
