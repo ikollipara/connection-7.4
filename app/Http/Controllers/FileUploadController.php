@@ -13,8 +13,8 @@ class FileUploadController extends Controller
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
-            "file" => "required_without:image|file",
-            "image" => "required_without:file|image",
+            "file" => "file|nullable",
+            "image" => "image|nullable",
         ]);
 
         $path = false;
