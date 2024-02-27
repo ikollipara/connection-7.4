@@ -2,10 +2,11 @@
 export default (readOnly, cannotUpload, csrf, body) => ({
         async init() {
             this.imagesToDelete = [];
+            this.attachesToDelete = [];
             await Promise.all([
                 /* webpackPreload: true */ import("@editorjs/editorjs"),
                 import("@editorjs/header"),
-                import("@editorjs/attaches"),
+                import("./attaches-override"),
                 import("@editorjs/delimiter"),
                 import("@editorjs/embed"),
                 import("./image-override"),
@@ -73,6 +74,7 @@ export default (readOnly, cannotUpload, csrf, body) => ({
                                 additionalRequestHeaders: {
                                     "X-CSRF-TOKEN": csrf,
                                 },
+                                attachesToDelete: this.attachesToDelete,
                             },
                         };
                     }
@@ -95,10 +97,15 @@ export default (readOnly, cannotUpload, csrf, body) => ({
         },
 
         persistDeletedImages() {
-            console.log(this.imagesToDelete);
-            Promise.allSettled(
-                this.imagesToDelete.map(path => window.axios.delete(route('upload.destroy'), { data: { path } }))
-                ).finally(() => this.imagesToDelete.length = 0)
+            Promise
+                .allSettled([
+                    ...this.imagesToDelete.map(path => window.axios.delete(route('upload.destroy'), { data: { path } })),
+                    ...this.attachesToDelete.map(path => window.axios.delete(route('upload.destroy'), { data: { path } })),
+                ])
+                .finally(() => {
+                    this.imagesToDelete.length = 0;
+                    this.attachesToDelete.length = 0;
+                })
         },
 
         async save() {
