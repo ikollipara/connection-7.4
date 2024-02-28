@@ -30,7 +30,7 @@ class FileUploadController extends Controller
             $request = Http::get($url);
             if ($request->successful()) {
                 $ext = Str::of($request->header("content-type"))
-                    ->split("/")
+                    ->split("/\//")
                     ->last();
                 $path = Storage::disk("public")->put(
                     "files/" . Str::random(40) . "." . $ext,
