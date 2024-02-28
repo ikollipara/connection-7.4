@@ -6,21 +6,21 @@ use App\Enums\Enum;
 
 class Language extends Enum
 {
-    const Python = "Python";
-    const Javascript = "JavaScript";
-    const Php = "PHP";
-    const Ruby = "Ruby";
-    const Swift = "Swift";
-    const Go = "Go";
-    const Java = "Java";
-    const Csharp = "C#";
-    const Typescript = "TypeScript";
-    const Kotlin = "Kotlin";
-    const C = "C";
-    const Cplusplus = "C++";
-    const Html = "HTML";
-    const Css = "CSS";
-    const Sql = "SQL";
-    const Scratch = "Scratch";
     const Blockly = "Blockly";
+    const C = "C";
+    const Csharp = "C#";
+    const Cplusplus = "C++";
+    const Css = "CSS";
+    const Go = "Go";
+    const Html = "HTML";
+    const Java = "Java";
+    const Javascript = "JavaScript";
+    const Kotlin = "Kotlin";
+    const Php = "PHP";
+    const Python = "Python";
+    const Ruby = "Ruby";
+    const Scratch = "Scratch";
+    const Sql = "SQL";
+    const Swift = "Swift";
+    const Typescript = "TypeScript";
 }
