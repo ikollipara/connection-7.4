@@ -32,10 +32,8 @@ class FileUploadController extends Controller
                 $ext = Str::of($request->header("content-type"))
                     ->split("/\//")
                     ->last();
-                $path = Storage::disk("public")->put(
-                    "files/" . Str::random(40) . "." . $ext,
-                    $request->body(),
-                );
+                $path = "files/" . Str::random(40) . "." . $ext;
+                Storage::disk("public")->put($path, $request->body());
             }
         }
 
