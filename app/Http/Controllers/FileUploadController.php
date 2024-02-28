@@ -7,6 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
 
 class FileUploadController extends Controller
 {
@@ -15,12 +16,26 @@ class FileUploadController extends Controller
         $request->validate([
             "file" => "file|nullable",
             "image" => "image|nullable",
+            "url" => "url",
         ]);
 
         $path = false;
         if ($file = $request->file("file") ?? $request->file("image")) {
             if ($file instanceof UploadedFile) {
                 $path = $file->store("files", "public");
+            }
+        }
+
+        if ($url = $request->get("url")) {
+            $request = Http::get($url);
+            if ($request->successful()) {
+                $ext = Str::of($request->header("content-type"))
+                    ->split("/")
+                    ->last();
+                $path = Storage::disk("public")->put(
+                    "files/" . Str::random(40) . "." . $ext,
+                    $request->body(),
+                );
             }
         }
 

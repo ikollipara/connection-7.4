@@ -60,6 +60,7 @@ export default (readOnly, cannotUpload, csrf, body) => ({
                             config: {
                                 endpoints: {
                                     byFile: route('upload.store'),
+                                    byUrl: route('upload.store'),
                                 },
                                 additionalRequestHeaders: {
                                     "X-CSRF-TOKEN": csrf,
