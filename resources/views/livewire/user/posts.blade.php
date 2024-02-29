@@ -10,6 +10,9 @@
           {{ $this->user->subject }} Teacher at
           {{ $this->user->school }}
         </p>
+      </div>
+    </div>
+    <x-forms.input name="search" placeholder="Search..." label="" wire:model.debounce.300ms="search" />
   </x-hero>
   <main class="container is-fluid mt-3">
     <table class="table is-fullwidth">

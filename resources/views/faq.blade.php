@@ -4,8 +4,7 @@
     @livewire('submit-f-a-q-question')
   </x-hero>
   <main class="container is-fluid mt-2 content">
-    <article>
-      <h2 class="subtitle">How do I use ConneCTION?</h2>
+    <x-faq.answer title="How do I use ConneCTION?">
       <p>
         ConneCTION is a platform for teachers to share, comment, and collect materials to aid in teaching Computer
         Science.
@@ -16,10 +15,9 @@
         materials to share, you can create a <a href="{{ route('posts.create') }}" class="link">post</a> or a <a
           href="{{ route('collections.create') }}" class="link">collection</a>.
       </p>
-    </article>
+    </x-faq.answer>
     <hr>
-    <article>
-      <h2 class="subtitle">What is a Post?</h2>
+    <x-faq.answer title="What is a Post?">
       <p>
         In ConneCTION, a post is a piece of content that a user shares with the community. A post can be a link to an
         article, a video, a file, or a text.
@@ -27,10 +25,9 @@
         to showcase what you have learned over
         the course of your teaching career and to share that knowledge with others.
       </p>
-    </article>
+    </x-faq.answer>
     <hr>
-    <article>
-      <h2 class="subtitle">What is a Collection?</h2>
+    <x-faq.answer title="What is a Collection?">
       <p>
         A Collection is a group of posts that a user has curated. A collection can be shared with the community and can
         be added to by other users. A collection
@@ -40,10 +37,9 @@
         collection could be a list of resources for
         teaching Python to high school students.
       </p>
-    </article>
+    </x-faq.answer>
     <hr>
-    <article>
-      <h2 class="subtitle">What does "Draft", "Published", and "Archived" mean?</h2>
+    <x-faq.answer title="What does 'Draft', 'Published', and 'Archived' mean?">
       <p>
         In ConneCTION a post or collection can be in one of three states: draft, published, or archived. A draft is an
         unplublished post or collection that is still being worked on. A published post or collection is a post or
@@ -59,6 +55,16 @@
         unarchive it.
         But also teachers who have found your post or collection helpful can still access it.
       </p>
-    </article>
+    </x-faq.answer>
+    <hr>
+    <x-faq.answer title="How to Upload Powerpoints">
+      <p class="content">
+        If you're having trouble uploading powerpoints to Connection, then consider converting your powerpoint to a PDF.
+        The PDF will compress the file size and make it easier to upload, and it will also make it easier for other
+        teachers to view your powerpoint.
+        It will also protect the powerpoint from being edited or changed by others, thus preserving your work much
+        better
+      </p>
+    </x-faq.answer>
   </main>
 </x-layout>

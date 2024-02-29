@@ -11,17 +11,25 @@ class Collections extends Component
     use WithPagination;
 
     public User $user;
+    public string $search = "";
 
     public function mount(User $user): void
     {
         $this->user = $user;
     }
 
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
     public function getCollectionsProperty(): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        return $this->user
-            ->postCollections()
-            ->where("published", true)
+        $query = $this->user->postCollections()->where("published", true);
+        if ($this->search) {
+            $query->where("title", "like", "%{$this->search}%");
+        }
+        return $query
             ->orderBy("likes_count", "desc")
             ->orderBy("views", "desc")
             ->orderBy("created_at", "desc")

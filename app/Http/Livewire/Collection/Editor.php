@@ -155,7 +155,7 @@ class Editor extends Component
     public function render()
     {
         return view("livewire.collection.editor")->layoutData([
-            "title" => __("Create Collection"),
+            "title" => __("Collection Editor"),
         ]);
     }
 }

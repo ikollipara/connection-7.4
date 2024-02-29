@@ -133,7 +133,7 @@ class Editor extends Component
     public function render()
     {
         return view("livewire.post.editor")->layoutData([
-            "title" => __("New Post"),
+            "title" => __("Post Editor"),
         ]);
     }
 }

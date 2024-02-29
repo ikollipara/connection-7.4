@@ -12,16 +12,29 @@ class Posts extends Component
     use WithPagination;
 
     public User $user;
+    public string $search = "";
 
     public function mount(User $user): void
     {
         $this->user = $user;
     }
 
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
     public function getPostsProperty(): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        return Post::query()
+        $query = Post::query()
             ->where("user_id", $this->user->id)
+            ->where("published", true);
+
+        if ($this->search) {
+            $query->where("title", "like", "%{$this->search}%");
+        }
+
+        return $query
             ->orderByDesc("likes_count")
             ->orderByDesc("views")
             ->orderBy("created_at")
