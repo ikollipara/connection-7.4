@@ -15,6 +15,7 @@ export default (readOnly, cannotUpload, csrf, body) => ({
                 import("@editorjs/table"),
                 import("@editorjs/text-variant-tune"),
                 import("@editorjs/underline"),
+                import("@editorjs/code")
             ]).then(
                 ([
                     { default: EditorJS },
@@ -28,6 +29,7 @@ export default (readOnly, cannotUpload, csrf, body) => ({
                     { default: table },
                     { default: textVariantTune },
                     { default: underline },
+                    { default: code }
                 ]) => {
                     const tools = {
                         header,
@@ -35,6 +37,7 @@ export default (readOnly, cannotUpload, csrf, body) => ({
                         list,
                         quote,
                         table,
+                        code,
                         underline,
                         embed: {
                             class: embed,
