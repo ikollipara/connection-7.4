@@ -39,8 +39,8 @@ class Comments extends Component
 
     public function getCommentsProperty(): LengthAwarePaginator
     {
-        return $this->item
-            ->comments()
+        return Comment::query()
+            ->where("commentable_id", $this->item->id)
             ->orderByDesc("created_at")
             ->with("user")
             ->paginate(10);
