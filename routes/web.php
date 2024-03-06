@@ -77,6 +77,12 @@ Route::middleware("auth")->group(function () {
     Route::get("/users/{user}/collections", User\Collections::class)
         ->name("users.collections.index")
         ->middleware("verified");
+    Route::get("/users/{user}/followers", User\Followers::class)
+        ->name("users.followers.index")
+        ->middleware("verified");
+    Route::get("/users/{user}/followings", User\Followings::class)
+        ->name("users.followings.index")
+        ->middleware("verified");
 
     // File Upload
     Route::post("/upload", [FileUploadController::class, "store"])

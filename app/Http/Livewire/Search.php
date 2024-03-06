@@ -34,6 +34,8 @@ class Search extends Component
     public array $practices = [];
     /** @var array<\App\Enums\Language> */
     public array $languages = [];
+    public int $likes_count = 0;
+    public int $views_count = 0;
 
     public function mount(): void
     {
@@ -44,69 +46,157 @@ class Search extends Component
 
     public function search(): void
     {
+        $grades_count = count($this->grades);
+        $standards_count = count($this->standards);
+        $practices_count = count($this->practices);
+        $languages_count = count($this->languages);
+        $categories_count = count($this->categories);
+        $audiences_count = count($this->audiences);
+
         $post_query = Post::search($this->query)->query(function (
             Builder $query
+        ) use (
+            $grades_count,
+            $standards_count,
+            $practices_count,
+            $languages_count,
+            $categories_count,
+            $audiences_count
         ) {
-            if (count($this->grades) > 0) {
-                $query->whereJsonContains("metadata->grades", $this->grades);
-            }
-            if (count($this->standards) > 0) {
-                $query->whereJsonContains(
-                    "metadata->standards",
-                    $this->standards,
-                );
-            }
-            if (count($this->practices) > 0) {
-                $query->whereJsonContains(
-                    "metadata->practices",
-                    $this->practices,
-                );
-            }
-            if (count($this->languages) > 0) {
-                $query->whereJsonContains(
-                    "metadata->languages",
-                    $this->languages,
-                );
-            }
-            if (count($this->categories) > 0) {
-                $query->whereIn("metadata->category", $this->categories);
-            }
-            if (count($this->audiences) > 0) {
-                $query->whereIn("metadata->audience", $this->audiences);
-            }
-        });
-        $collection_query = PostCollection::search($this->query)->query(
-            function (Builder $query) {
-                if (count($this->grades) > 0) {
-                    $query->whereJsonContains(
+            return $query
+                ->where("published", true)
+                ->when(
+                    $grades_count > 0,
+                    fn($query) => $query->whereJsonContains(
                         "metadata->grades",
                         $this->grades,
-                    );
-                }
-                if (count($this->standards) > 0) {
-                    $query->whereJsonContains(
+                    ),
+                )
+                ->when(
+                    $standards_count > 0,
+                    fn($query) => $query->whereJsonContains(
                         "metadata->standards",
                         $this->standards,
-                    );
-                }
-                if (count($this->practices) > 0) {
-                    $query->whereJsonContains(
+                    ),
+                )
+                ->when(
+                    $practices_count > 0,
+                    fn($query) => $query->whereJsonContains(
                         "metadata->practices",
                         $this->practices,
-                    );
-                }
-                if (count($this->languages) > 0) {
-                    $query->whereJsonContains(
+                    ),
+                )
+                ->when(
+                    $languages_count > 0,
+                    fn($query) => $query->whereJsonContains(
                         "metadata->languages",
                         $this->languages,
-                    );
-                }
-                if (count($this->categories) > 0) {
-                    $query->whereIn("metadata->category", $this->categories);
-                }
-                if (count($this->audiences) > 0) {
-                    $query->whereIn("metadata->audience", $this->audiences);
-                }
+                    ),
+                )
+                ->when(
+                    $categories_count > 0,
+                    fn($query) => $query->whereIn(
+                        "metadata->category",
+                        $this->categories,
+                    ),
+                )
+                ->when(
+                    $audiences_count > 0,
+                    fn($query) => $query->whereIn(
+                        "metadata->audience",
+                        $this->audiences,
+                    ),
+                )
+                ->when(
+                    $this->likes_count != 0,
+                    fn($query) => $query->where(
+                        "likes_count",
+                        ">=",
+                        $this->likes_count,
+                    ),
+                )
+                ->when(
+                    $this->views_count != 0,
+                    fn($query) => $query->where(
+                        "views",
+                        ">=",
+                        $this->views_count,
+                    ),
+                )
+                ->orderBy("likes_count", "desc")
+                ->orderBy("views", "desc");
+        });
+        $collection_query = PostCollection::search($this->query)->query(
+            function (Builder $query) use (
+                $grades_count,
+                $standards_count,
+                $practices_count,
+                $languages_count,
+                $categories_count,
+                $audiences_count
+            ) {
+                return $query
+                    ->where("published", true)
+                    ->when(
+                        $grades_count > 0,
+                        fn($query) => $query->whereJsonContains(
+                            "metadata->grades",
+                            $this->grades,
+                        ),
+                    )
+                    ->when(
+                        $standards_count > 0,
+                        fn($query) => $query->whereJsonContains(
+                            "metadata->standards",
+                            $this->standards,
+                        ),
+                    )
+                    ->when(
+                        $practices_count > 0,
+                        fn($query) => $query->whereJsonContains(
+                            "metadata->practices",
+                            $this->practices,
+                        ),
+                    )
+                    ->when(
+                        $languages_count > 0,
+                        fn($query) => $query->whereJsonContains(
+                            "metadata->languages",
+                            $this->languages,
+                        ),
+                    )
+                    ->when(
+                        $categories_count > 0,
+                        fn($query) => $query->whereIn(
+                            "metadata->category",
+                            $this->categories,
+                        ),
+                    )
+                    ->when(
+                        $audiences_count > 0,
+                        fn($query) => $query->whereIn(
+                            "metadata->audience",
+                            $this->audiences,
+                        ),
+                    )
+                    ->when(
+                        $this->likes_count != 0,
+                        fn($query) => $query->where(
+                            "likes_count",
+                            ">=",
+                            $this->likes_count,
+                        ),
+                    )
+                    ->when(
+                        $this->views_count != 0,
+                        fn($query) => $query->where(
+                            "views",
+                            ">=",
+                            $this->views_count,
+                        ),
+                    )
+                    ->orderBy("likes_count", "desc")
+                    ->orderBy("views", "desc");
             },
         );
         if ($this->type === "post") {

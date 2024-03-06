@@ -7,8 +7,11 @@
       <div class="is-flex is-flex-direction-column">
         <h1 class="title is-1">{{ $this->user->full_name() }}</h1>
         <div class="is-flex is-justify-content-start is-align-items-center" style="gap: 1em;">
-          <a href="" class="is-link">{{ $this->user->followers_count }} Followers</a>
-          <a href="" class="is-link">{{ $this->user->following_count }} Following</a>
+          <a href="{{ route('users.followers.index', ['user' => $this->user]) }}"
+            class="is-link">{{ $this->user->followers_count }}
+            Followers</a>
+          <a href="{{ route('users.followings.index', ['user' => $this->user]) }}"
+            class="is-link">{{ $this->user->following_count }} Following</a>
         </div>
         <p class="is-italic content">
           {{ $this->user->subject }} Teacher at
@@ -22,11 +25,11 @@
     <table class="table is-fullwidth">
       <thead></thead>
       <tbody>
-        @foreach ($this->collections as $collection)
-          <x-search.row :item="$collection" :show-user="false" />
+        @foreach ($this->followings as $follower)
+          @livewire('user.row', ['user' => $follower], key($follower->id))
         @endforeach
       </tbody>
     </table>
-    {{ $this->collections->links('pagination') }}
+    {{ $this->followings->links('pagination') }}
   </main>
 </div>

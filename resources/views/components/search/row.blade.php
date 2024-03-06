@@ -1,6 +1,7 @@
 @props(['item', 'showUser' => true])
 @if ($item instanceof \App\Models\Post)
   <tr>
+    <td><span class="tag is-link">Post</span></td>
     @if ($item->title)
       <td>{{ $item->title }}</td>
     @else
@@ -8,7 +9,8 @@
     @endif
     @if ($showUser)
       @if ($item->user)
-        <td>{{ $item->user->full_name() }}</td>
+        <td><a href="{{ route('users.show', ['user' => $item->user]) }}" class="link">{{ $item->user->full_name() }}</a>
+        </td>
       @else
         <td>[Deleted]</td>
       @endif
@@ -33,6 +35,7 @@
   </tr>
 @else
   <tr>
+    <td><span class="tag is-link">Collection</span></td>
     @if ($item->title)
       <td>{{ $item->title }}</td>
     @else
@@ -40,8 +43,9 @@
     @endif
     @if ($showUser)
       @if ($item->user)
-        <td>{{ $item->user->full_name() }}</td>
-      @else
+        <td><a href="{{ route('users.show', ['user' => $item->user]) }}"
+            class="link">{{ $item->user->full_name() }}</a>
+        @else
         <td>[Deleted]</td>
       @endif
     @endif
