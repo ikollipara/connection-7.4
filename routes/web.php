@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\FileUploadController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostCollectionCommentsController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostCollectionsController;
@@ -16,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Livewire\User;
 use App\Http\Livewire\Post;
 use App\Http\Livewire\Collection;
+use App\Http\Livewire\Home;
 use App\Http\Livewire\Search;
 
 /*
@@ -58,7 +58,7 @@ Route::get("/reset-password/{token}", ResetPassword::class)
     ->name("password.reset");
 
 Route::middleware("auth")->group(function () {
-    Route::get("/home", [HomeController::class, "index"])->name("home");
+    Route::get("/home", Home::class)->name("home");
     Route::view("/faq", "faq")
         ->name("faq")
         ->middleware("verified");

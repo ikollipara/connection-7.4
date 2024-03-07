@@ -76,3 +76,9 @@ document.addEventListener('post-removed', (event) => {
         event.target.remove();
     }, 1000);
 })
+
+document.addEventListener('livewire:load', () => {
+    Livewire.onPageExpired(() => {
+        window.error('Your session has expired. Please refresh the page. Nothing will be saved, so please copy your work before refreshing.');
+    });
+})
