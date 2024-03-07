@@ -8,9 +8,12 @@ use App\Enums\Category;
 use App\Models\PostCollection;
 use App\Models\User;
 use App\Notifications\NewFollowedCollection;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Editor extends Component
 {
+    use AuthorizesRequests;
+
     public string $body;
     /** @var string[] */
     public array $grades = [];
@@ -41,6 +44,7 @@ class Editor extends Component
                     ],
                 );
             }
+            $this->authorize("update", $post_collection);
             $this->fill([
                 "grades" => $post_collection->metadata["grades"],
                 "standards" => $post_collection->metadata["standards"],
@@ -50,6 +54,7 @@ class Editor extends Component
                 "languages" => $post_collection->metadata["languages"],
             ]);
         } else {
+            $this->authorize("create", PostCollection::class);
             $this->post_collection = new PostCollection();
         }
         $this->body = json_encode($this->post_collection->body);

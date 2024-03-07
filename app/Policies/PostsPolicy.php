@@ -30,7 +30,7 @@ class PostsPolicy
      */
     public function view(User $user, Post $post)
     {
-        return $post->published || $post->user_id === $user->id;
+        return $post->published or $post->user_id === $user->id;
     }
 
     /**

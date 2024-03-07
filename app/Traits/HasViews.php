@@ -17,8 +17,8 @@ trait HasViews
     public function isViewedBy(User $user): bool
     {
         return DB::table($this->viewTable)
-            ->where("user_id", $user->id)
-            ->where($this->viewColumn, $this->id)
+            ->where("user_id", "=", $user->id)
+            ->where($this->viewColumn, "=", $this->id)
             ->exists();
     }
 

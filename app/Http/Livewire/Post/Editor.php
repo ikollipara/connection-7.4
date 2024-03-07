@@ -7,10 +7,13 @@ use App\Enums\Category;
 use App\Models\Post;
 use App\Models\User;
 use App\Notifications\NewFollowedPost;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Editor extends Component
 {
+    use AuthorizesRequests;
+
     public Post $post;
     /** @var string[] */
     public array $grades = [];
@@ -36,6 +39,7 @@ class Editor extends Component
                     "languages" => [],
                 ]);
             }
+            $this->authorize("update", $post);
             $this->fill([
                 "grades" => $post->metadata["grades"],
                 "standards" => $post->metadata["standards"],
@@ -45,6 +49,7 @@ class Editor extends Component
                 "languages" => $post->metadata["languages"],
             ]);
         } else {
+            $this->authorize("create", Post::class);
             $this->post = new Post();
         }
         $this->body = json_encode($this->post->body);

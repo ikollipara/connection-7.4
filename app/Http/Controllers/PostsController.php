@@ -51,7 +51,7 @@ class PostsController extends Controller
         $this->authorize("view", $post);
         /** @var \App\Models\User */
         $user = $this->current_user();
-        if ($post->isViewedBy($user)) {
+        if (!$post->isViewedBy($user)) {
             $post->view($user);
         }
 
