@@ -45,7 +45,8 @@ class Home extends Component
                         ->with("user")
                         ->get(),
                 ];
-            });
+            })
+            ->flatten();
     }
 
     /** @return \Illuminate\Database\Eloquent\Collection<\App\Models\Post> */
