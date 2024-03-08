@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\PostCollection;
 use Illuminate\Support\Collection;
 use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
 
@@ -16,17 +17,11 @@ class Index extends Component
     public string $status = "draft";
     public User $user;
     public string $search = "";
+    public bool $ready_to_load_collections = false;
 
     public function mount(): void
     {
-        $status = request()->query("status", "draft");
-        $this->status = $status;
-        $user = auth()->user();
-        if ($user) {
-            $this->user = $user;
-        } else {
-            $this->redirect(route("login"));
-        }
+        $this->status = request()->query("status", "draft");
     }
 
     /** @return array<string, string[]|string> */
@@ -42,20 +37,34 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function getPostCollectionsProperty()
+    public function loadCollections(): void
     {
-        if ($this->search !== "") {
-            return $this->user
-                ->postCollections()
-                ->status($this->status)
-                ->where("title", "like", "%{$this->search}%")
-                ->orderByDesc("created_at")
-                ->paginate(10);
+        $this->ready_to_load_collections = true;
+    }
+
+    public function getPostCollectionsProperty(): LengthAwarePaginator
+    {
+        if (!$this->ready_to_load_collections) {
+            return new \Illuminate\Pagination\LengthAwarePaginator(
+                [],
+                0,
+                10,
+                $this->page,
+            );
         }
-        return $this->user
+        return auth()
+            ->user()
             ->postCollections()
             ->status($this->status)
-            ->orderByDesc("created_at")
+            ->when(
+                $this->search !== "",
+                fn($query) => $query->where(
+                    "title",
+                    "like",
+                    "%{$this->search}%",
+                ),
+            )
+            ->latest()
             ->paginate(10);
     }
 

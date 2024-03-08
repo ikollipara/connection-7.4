@@ -115,4 +115,8 @@ export default (readOnly, cannotUpload, csrf, body) => ({
         async save() {
             return await this.editor.save();
         },
+
+        async destroy() {
+            this.editor.destroy();
+        }
     });

@@ -8,10 +8,24 @@ use App\Models\PostCollection;
 class Row extends Component
 {
     public PostCollection $post_collection;
+    public bool $ready_to_load_number_of_posts = false;
 
     public function mount(PostCollection $post_collection): void
     {
         $this->post_collection = $post_collection;
+    }
+
+    public function loadNumberOfPosts(): void
+    {
+        $this->ready_to_load_number_of_posts = true;
+    }
+
+    public function getNumberOfPostsProperty(): int
+    {
+        if (!$this->ready_to_load_number_of_posts) {
+            return 0;
+        }
+        return $this->post_collection->posts()->count();
     }
 
     public function archive(): void

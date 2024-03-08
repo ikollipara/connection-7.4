@@ -21,7 +21,7 @@ use App\Events\PostViewed;
  * @property string $id
  * @property string $title
  * @property array<string, string> $body
- * @property array<string, string> $metadata
+ * @property array<string, string|string[]> $metadata
  * @property bool $published
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -110,6 +110,16 @@ class Post extends Model implements Likable, Viewable
     }
 
     /**
+     * Get all the published posts.
+     * @param \Illuminate\Database\Eloquent\Builder<self> $query
+     * @return \Illuminate\Database\Eloquent\Builder<self>
+     */
+    public function scopePublished($query)
+    {
+        return $query->where("published", true);
+    }
+
+    /**
      * Convert PostCollection to Searchable Array
      * @return array<string, mixed>
      */
@@ -148,6 +158,11 @@ class Post extends Model implements Likable, Viewable
     public function shouldBeSearchable()
     {
         return $this->published and !$this->trashed();
+    }
+
+    public function wasRecentlyPublished(): bool
+    {
+        return $this->published and $this->wasChanged("published");
     }
 
     public static function booted()

@@ -6,6 +6,9 @@ $success: #1eb167;
 @import url('slim-select/styles');
 @import "bulma/bulma.sass";
 
-.bulma-loader-mixin {
+.loader {
     @include loader;
+    margin: auto;
+    width: 5em;
+    height: 5em;
 }

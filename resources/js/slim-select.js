@@ -16,4 +16,8 @@ export default (placeholder) => ({
             });
         });
     },
+
+    async destroy() {
+        this.slimSelect.destroy();
+    }
 });

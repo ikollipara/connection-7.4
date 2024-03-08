@@ -10,23 +10,27 @@
       </p>
     @endif
   </x-hero>
-  <main class="container">
-    <table class="table is-fullwidth is-hoverable">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Created At</th>
-          <th>Updated At</th>
-          <th>Views</th>
-          <th>Likes</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach ($this->posts as $post)
-          @livewire('post.row', ['post' => $post], key($post->id))
-        @endforeach
-      </tbody>
-    </table>
-    {{ $this->posts->links('pagination') }}
+  <main wire:init='loadPosts' class="container">
+    @if ($this->ready_to_load_posts === false)
+      <span style="margin-block: 5em;" class="loader"></span>
+    @else
+      <table class="table is-fullwidth is-hoverable">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+            <th>Views</th>
+            <th>Likes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach ($this->posts as $post)
+            @livewire('post.row', ['post' => $post], key($post->id))
+          @endforeach
+        </tbody>
+      </table>
+      {{ $this->posts->links('pagination') }}
+    @endif
 </div>

@@ -15,33 +15,36 @@ class Index extends Component
     public string $status = "draft";
     public User $user;
     public string $search = "";
+    public bool $ready_to_load_posts = false;
 
     public function mount(): void
     {
-        $status = request()->query("status", "draft");
-        $this->status = $status;
-        $user = auth()->user();
-        if ($user) {
-            $this->user = $user;
-        } else {
-            $this->redirect(route("login"));
-        }
+        $this->status = request()->query("status", "draft");
+        $this->user = auth()->user();
+    }
+
+    public function loadPosts(): void
+    {
+        $this->ready_to_load_posts = true;
     }
 
     public function getPostsProperty(): LengthAwarePaginator
     {
-        if ($this->search !== "") {
-            return $this->user
-                ->posts()
-                ->status($this->status)
-                ->where("title", "like", "%{$this->search}%")
-                ->orderByDesc("created_at")
-                ->paginate(10);
+        if (!$this->ready_to_load_posts) {
+            return new \Illuminate\Pagination\LengthAwarePaginator(
+                [],
+                0,
+                10,
+                $this->page,
+            );
         }
         return $this->user
             ->posts()
             ->status($this->status)
-            ->orderByDesc("created_at")
+            ->when($this->search !== "", function ($query) {
+                return $query->where("title", "like", "%{$this->search}%");
+            })
+            ->latest()
             ->paginate(10);
     }
 

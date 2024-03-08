@@ -3,8 +3,7 @@
 @endphp
 
 <span wire:ignore>
-  <select @@turbolinks:before-cache.document='slimSelect.destroy' x-data="slimSelect('Audiences...')"
-    x-modelable="selected" {{ $attributes }} name="audience" id="audience">
+  <select x-data="slimSelect('Audiences...')" x-modelable="selected" {{ $attributes }} name="audience" id="audience">
     @foreach (Audience::cases() as $audience)
       <option wire:key="{{ $audience }}" value="{{ $audience }}">{{ $audience }}</option>
     @endforeach

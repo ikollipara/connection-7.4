@@ -9,20 +9,35 @@ use Livewire\Component;
 
 class Home extends Component
 {
-    public User $user;
+    public bool $ready_to_load_top_posts = false;
+    public bool $ready_to_load_top_collections = false;
+    public bool $ready_to_load_followings_items = false;
 
-    public function mount()
+    public function loadPosts(): void
     {
-        if (!($this->user = auth()->user())) {
-            return redirect()->route("login.create");
-        }
-        $this->user->load("posts", "postCollections", "following");
+        $this->ready_to_load_top_posts = true;
+    }
+
+    public function loadCollections(): void
+    {
+        $this->ready_to_load_top_collections = true;
+    }
+
+    public function loadFollowingsItems(): void
+    {
+        $this->ready_to_load_followings_items = true;
     }
 
     /** @return \Illuminate\Support\Collection<\App\Models\Post|\App\Models\PostCollection> */
     public function getFollowingsItemsProperty()
     {
-        return $this->user
+        if (!$this->ready_to_load_followings_items) {
+            return collect();
+        }
+        /** @var User */
+        $user = auth()->user();
+
+        return $user
             ->load([
                 "following",
                 "following.posts",
@@ -52,6 +67,9 @@ class Home extends Component
     /** @return \Illuminate\Database\Eloquent\Collection<\App\Models\Post> */
     public function getTopPostsProperty()
     {
+        if (!$this->ready_to_load_top_posts) {
+            return collect();
+        }
         return Post::query()
             ->where("published", true)
             ->orderBy("likes_count", "desc")
@@ -64,6 +82,9 @@ class Home extends Component
     /** @return \Illuminate\Database\Eloquent\Collection<\App\Models\PostCollection> */
     public function getTopCollectionsProperty()
     {
+        if (!$this->ready_to_load_top_collections) {
+            return collect();
+        }
         return PostCollection::query()
             ->where("published", true)
             ->orderBy("likes_count", "desc")

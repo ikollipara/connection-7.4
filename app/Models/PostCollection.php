@@ -143,6 +143,11 @@ class PostCollection extends Model implements Likable, Viewable
         return $this->published and !$this->trashed();
     }
 
+    public function wasRecentlyPublished(): bool
+    {
+        return $this->published and $this->wasChanged("published");
+    }
+
     public static function booted()
     {
         static::creating(function (PostCollection $postCollection) {

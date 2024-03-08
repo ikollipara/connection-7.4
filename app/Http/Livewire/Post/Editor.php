@@ -7,25 +7,18 @@ use App\Enums\Category;
 use App\Models\Post;
 use App\Models\User;
 use App\Notifications\NewFollowedPost;
+use App\Traits\HasAutosave;
+use App\Traits\HasMetadata;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Editor extends Component
 {
-    use AuthorizesRequests;
+    use AuthorizesRequests, HasMetadata, HasAutosave;
 
     public Post $post;
-    /** @var string[] */
-    public array $grades = [];
-    /** @var string[] */
-    public array $standards = [];
-    /** @var string[] */
-    public array $practices = [];
-    /** @var string[] */
-    public array $languages = [];
-    public string $category = Category::Material;
-    public string $audience = Audience::Students;
     public string $body;
+    public bool $ready_to_load_post = false;
 
     /**
      * @param string|null $uuid
@@ -68,43 +61,31 @@ class Editor extends Component
         "languages" => ["array"],
     ];
 
-    public function updatedBody(string $value): void
-    {
-        if ($decoded = json_decode($value, true)) {
-            // @phpstan-ignore-next-line
-            $this->post->body = $decoded;
-            if ($this->post->exists) {
-                $this->post->save();
-                $this->dispatchBrowserEvent("editor-saved");
-            }
-        }
-    }
-
-    public function updatedPostTitle(string $value): void
-    {
-        $this->post->title = $value;
-        if ($this->post->exists) {
-            $this->post->save();
-            $this->dispatchBrowserEvent("editor-saved");
-        }
-    }
-
     public function save(): void
     {
         $this->validate();
         $this->post->user_id = auth()->user()->id;
-        $this->post->metadata = [
-            "audience" => $this->audience,
-            "category" => $this->category,
-            "grades" => $this->grades,
-            "standards" => $this->standards,
-            "practices" => $this->practices,
-            "languages" => $this->languages,
-        ];
+        $this->post->metadata = $this->getMetadata();
         if (!$this->post->exists) {
             $this->post->body = json_decode($this->body, true);
         }
         if ($this->post->save()) {
+            if ($this->post->wasRecentlyPublished()) {
+                $this->dispatchBrowserEvent("success", [
+                    "message" => __("Post published!"),
+                ]);
+                $this->post->user
+                    ->followers()
+                    ->each(
+                        fn(User $follower) => $follower->notify(
+                            new NewFollowedPost($this->post),
+                        ),
+                    );
+            } else {
+                $this->dispatchBrowserEvent("success", [
+                    "message" => __("Post saved!"),
+                ]);
+            }
             if (
                 $this->post->published and $this->post->wasChanged("published")
             ) {

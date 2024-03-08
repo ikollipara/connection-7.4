@@ -10,25 +10,29 @@
       </p>
     @endif
   </x-hero>
-  <main class="container">
-    <table class="table is-fullwidth is-hoverable">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Number of Posts</th>
-          <th>Created At</th>
-          <th>Updated At</th>
-          <th>Views</th>
-          <th>Likes</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach ($this->postCollections as $post_collection)
-          @livewire('collection.row', ['post_collection' => $post_collection], key($post_collection->id))
-        @endforeach
-      </tbody>
-    </table>
-    {{ $this->postCollections->links('pagination') }}
+  <main wire:init='loadCollections' class="container">
+    @if ($this->ready_to_load_collections === false)
+      <span style="margin-block: 5em;" class="loader"></span>
+    @else
+      <table class="table is-fullwidth is-hoverable">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Number of Posts</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+            <th>Views</th>
+            <th>Likes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach ($this->postCollections as $post_collection)
+            @livewire('collection.row', ['post_collection' => $post_collection], key($post_collection->id))
+          @endforeach
+        </tbody>
+      </table>
+      {{ $this->postCollections->links('pagination') }}
+    @endif
   </main>
 </div>

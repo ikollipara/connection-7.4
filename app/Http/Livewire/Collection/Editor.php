@@ -8,25 +8,14 @@ use App\Enums\Category;
 use App\Models\PostCollection;
 use App\Models\User;
 use App\Notifications\NewFollowedCollection;
+use App\Traits\HasMetadata;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Editor extends Component
 {
-    use AuthorizesRequests;
+    use AuthorizesRequests, HasMetadata;
 
     public string $body;
-    /** @var string[] */
-    public array $grades = [];
-    /** @var string[] */
-    public array $standards = [];
-    /** @var string[] */
-    public array $practices = [];
-    /** @var string[] */
-    public array $languages = [];
-
-    public string $category = Category::Material;
-    public string $audience = Audience::Students;
-
     public PostCollection $post_collection;
 
     /**
@@ -75,12 +64,11 @@ class Editor extends Component
 
     public function updatedBody(string $value): void
     {
-        // @phpstan-ignore-next-line
         if ($decoded = json_decode($value, true)) {
             $this->post_collection->body = $decoded;
             if ($this->post_collection->exists) {
-                $this->post_collection->save();
-                $this->dispatchBrowserEvent("editor-saved");
+                $this->post_collection->save() and
+                    $this->dispatchBrowserEvent("editor-saved");
             }
         }
     }
@@ -95,8 +83,8 @@ class Editor extends Component
             $name === "post_collection.title" and
             $this->post_collection->exists
         ) {
-            $this->post_collection->save();
-            $this->dispatchBrowserEvent("editor-saved");
+            $this->post_collection->save() and
+                $this->dispatchBrowserEvent("editor-saved");
         }
     }
 
@@ -104,32 +92,22 @@ class Editor extends Component
     {
         $this->validate();
         $this->post_collection->user_id = auth()->user()->id;
-        $this->post_collection->metadata = [
-            "audience" => $this->audience,
-            "category" => $this->category,
-            "grades" => $this->grades,
-            "standards" => $this->standards,
-            "practices" => $this->practices,
-            "languages" => $this->languages,
-        ];
+        $this->post_collection->metadata = $this->getMetadata();
         if (!$this->post_collection->exists) {
             $this->post_collection->body = json_decode($this->body, true);
         }
         if ($this->post_collection->save()) {
-            if (
-                $this->post_collection->published and
-                $this->post_collection->wasChanged("published")
-            ) {
+            if ($this->post_collection->wasRecentlyPublished()) {
                 $this->dispatchBrowserEvent("success", [
                     "message" => __("Collection published successfully!"),
                 ]);
-                $this->post_collection->user->followers->each(function (
-                    User $follower
-                ) {
-                    $follower->notify(
-                        new NewFollowedCollection($this->post_collection),
+                $this->post_collection->user
+                    ->followers()
+                    ->each(
+                        fn(User $follower) => $follower->notify(
+                            new NewFollowedCollection($this->post_collection),
+                        ),
                     );
-                });
             } elseif ($this->post_collection->wasRecentlyCreated) {
                 $this->dispatchBrowserEvent("success", [
                     "message" => __("Collection created successfully!"),

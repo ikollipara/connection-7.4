@@ -3,6 +3,7 @@ require("laravel-mix-purgecss");
 require("laravel-mix-compress");
 require("laravel-mix-imagemin");
 require("laravel-mix-polyfill");
+require('laravel-mix-bundle-analyzer');
 
 /*
  |--------------------------------------------------------------------------
@@ -18,15 +19,22 @@ require("laravel-mix-polyfill");
 mix
   .js('resources/js/app.js', 'public/js')
   .sass('resources/scss/app.scss', 'public/css')
-  .webpackConfig({
-    resolve: {
-      extensions: [".*",".wasm",".mjs",".js",".jsx",".json"]
-    },
+  .webpackConfig(webpack => {
+    return {
+      resolve: {
+        extensions: [".*",".wasm",".mjs",".js",".jsx",".json"]
+      }
+    }
   })
   .imagemin("images/*", { context: "resources" })
+
 
 if (mix.inProduction()) {
   mix
   .polyfill()
   .version()
+  .purgeCss({
+  safelist: ['animate__animated', 'animate__fadeIn', 'animate__fadeOut', /ss-*/],
+  })
+mix.bundleAnalyzer();
 }
