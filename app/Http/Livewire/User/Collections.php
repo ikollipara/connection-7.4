@@ -12,6 +12,7 @@ class Collections extends Component
 
     public User $user;
     public string $search = "";
+    public bool $ready_to_load_collections = false;
 
     public function mount(User $user): void
     {
@@ -23,16 +24,35 @@ class Collections extends Component
         $this->resetPage();
     }
 
+    public function loadCollections(): void
+    {
+        $this->ready_to_load_collections = true;
+    }
+
     public function getCollectionsProperty(): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        $query = $this->user->postCollections()->where("published", true);
-        if ($this->search) {
-            $query->where("title", "like", "%{$this->search}%");
+        if (!$this->ready_to_load_collections) {
+            return new \Illuminate\Pagination\LengthAwarePaginator(
+                [],
+                0,
+                10,
+                $this->page,
+            );
         }
-        return $query
+        return $this->user
+            ->postCollections()
+            ->where("published", true)
+            ->when(
+                $this->search !== "",
+                fn($query) => $query->where(
+                    "title",
+                    "like",
+                    "%{$this->search}%",
+                ),
+            )
             ->orderBy("likes_count", "desc")
             ->orderBy("views", "desc")
-            ->orderBy("created_at", "desc")
+            ->latest()
             ->paginate(10);
     }
 

@@ -18,15 +18,19 @@
     </div>
     <x-forms.input name="search" placeholder="Search..." label="" wire:model.debounce.300ms="search" />
   </x-hero>
-  <main class="container is-fluid mt-3">
-    <table class="table is-fullwidth">
-      <thead></thead>
-      <tbody>
-        @foreach ($this->collections as $collection)
-          <x-search.row :item="$collection" :show-user="false" />
-        @endforeach
-      </tbody>
-    </table>
-    {{ $this->collections->links('pagination') }}
+  <main wire:init='loadCollections' class="container is-fluid mt-3">
+    @if ($this->ready_to_load_collections === false)
+      <span style="margin-block: 5em;" class="loader"></span>
+    @else
+      <table class="table is-fullwidth">
+        <thead></thead>
+        <tbody>
+          @foreach ($this->collections as $collection)
+            <x-search.row :item="$collection" :show-user="false" />
+          @endforeach
+        </tbody>
+      </table>
+      {{ $this->collections->links('pagination') }}
+    @endif
   </main>
 </div>

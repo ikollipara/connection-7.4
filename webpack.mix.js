@@ -36,5 +36,4 @@ if (mix.inProduction()) {
   .purgeCss({
   safelist: ['animate__animated', 'animate__fadeIn', 'animate__fadeOut', /ss-*/],
   })
-mix.bundleAnalyzer();
 }

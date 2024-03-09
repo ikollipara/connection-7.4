@@ -13,6 +13,7 @@ class Posts extends Component
 
     public User $user;
     public string $search = "";
+    public bool $ready_to_load_posts = false;
 
     public function mount(User $user): void
     {
@@ -24,20 +25,30 @@ class Posts extends Component
         $this->resetPage();
     }
 
+    public function loadPosts(): void
+    {
+        $this->ready_to_load_posts = true;
+    }
+
     public function getPostsProperty(): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        $query = Post::query()
-            ->where("user_id", $this->user->id)
-            ->where("published", true);
-
-        if ($this->search) {
-            $query->where("title", "like", "%{$this->search}%");
+        if (!$this->ready_to_load_posts) {
+            return new \Illuminate\Pagination\LengthAwarePaginator(
+                [],
+                0,
+                10,
+                $this->page,
+            );
         }
-
-        return $query
+        return Post::query()
+            ->where("user_id", $this->user->id)
+            ->where("published", true)
+            ->when($this->search !== "", function ($query) {
+                return $query->where("title", "like", "%{$this->search}%");
+            })
             ->orderByDesc("likes_count")
             ->orderByDesc("views")
-            ->orderBy("created_at")
+            ->latest()
             ->paginate(10);
     }
 

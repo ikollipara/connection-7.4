@@ -2,7 +2,7 @@
   <x-hero class="is-primary">
     <div class="is-flex" style="gap: 1rem;">
       <figure class="image is-128x128 mt-auto mb-auto">
-        <img src="{{ $this->user->avatar() }}" alt="">
+        <img loading="lazy" src="{{ $this->user->avatar() }}" alt="">
       </figure>
       <div class="is-flex is-flex-direction-column">
         <h1 class="title is-1">{{ $this->user->full_name() }}</h1>
@@ -65,27 +65,35 @@
     <section x-bind:class="{ 'is-hidden': tab !== 0 }">
       <x-editor read-only wire:model='bio' name="bio" />
     </section>
-    <section class="is-hidden" x-bind:class="{ 'is-hidden': tab !== 1 }">
-      <table class="table is-fullwidth">
-        <thead>
-        </thead>
-        <tbody>
-          @foreach ($this->topPosts as $post)
-            <x-search.row :item="$post" :show-user="false" />
-          @endforeach
-        </tbody>
-      </table>
+    <section wire:init='loadPosts' class="is-hidden" x-bind:class="{ 'is-hidden': tab !== 1 }">
+      @if ($this->ready_to_load_posts === false)
+        <span style="margin-block: 5em;" class="loader"></span>
+      @else
+        <table class="table is-fullwidth">
+          <thead>
+          </thead>
+          <tbody>
+            @foreach ($this->topPosts as $post)
+              <x-search.row :item="$post" :show-user="false" />
+            @endforeach
+          </tbody>
+        </table>
+      @endif
     </section>
-    <section class="is-hidden" x-bind:class="{ 'is-hidden': tab !== 2 }">
-      <table class="table is-fullwidth">
-        <thead>
-        </thead>
-        <tbody>
-          @foreach ($this->topCollections as $collection)
-            <x-search.row :item="$collection" :show-user="false" />
-          @endforeach
-        </tbody>
-      </table>
+    <section wire:init='loadCollections' class="is-hidden" x-bind:class="{ 'is-hidden': tab !== 2 }">
+      @if ($this->ready_to_load_collections === false)
+        <span style="margin-block: 5em;" class="loader"></span>
+      @else
+        <table class="table is-fullwidth">
+          <thead>
+          </thead>
+          <tbody>
+            @foreach ($this->topCollections as $collection)
+              <x-search.row :item="$collection" :show-user="false" />
+            @endforeach
+          </tbody>
+        </table>
+      @endif
     </section>
   </main>
 </div>

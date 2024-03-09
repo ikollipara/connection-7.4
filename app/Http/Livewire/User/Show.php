@@ -9,12 +9,23 @@ class Show extends Component
 {
     public User $user;
     public string $bio;
+    public bool $ready_to_load_collections = false;
+    public bool $ready_to_load_posts = false;
 
     public function mount(User $user): void
     {
         $this->user = $user;
-        // @phpstan-ignore-next-line
         $this->bio = json_encode($user->bio);
+    }
+
+    public function loadCollections(): void
+    {
+        $this->ready_to_load_collections = true;
+    }
+
+    public function loadPosts(): void
+    {
+        $this->ready_to_load_posts = true;
     }
 
     /**
@@ -22,6 +33,9 @@ class Show extends Component
      */
     public function getTopPostsProperty()
     {
+        if (!$this->ready_to_load_posts) {
+            return collect();
+        }
         return $this->user
             ->posts()
             ->where("published", true)
@@ -36,6 +50,9 @@ class Show extends Component
      */
     public function getTopCollectionsProperty()
     {
+        if (!$this->ready_to_load_collections) {
+            return collect();
+        }
         return $this->user
             ->postCollections()
             ->where("published", true)

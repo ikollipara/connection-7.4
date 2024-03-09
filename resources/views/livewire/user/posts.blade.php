@@ -14,15 +14,19 @@
     </div>
     <x-forms.input name="search" placeholder="Search..." label="" wire:model.debounce.300ms="search" />
   </x-hero>
-  <main class="container is-fluid mt-3">
-    <table class="table is-fullwidth">
-      <thead></thead>
-      <tbody>
-        @foreach ($this->posts as $post)
-          <x-search.row :item="$post" :show-user="false" />
-        @endforeach
-      </tbody>
-    </table>
-    {{ $this->posts->links('pagination') }}
+  <main wire:init='loadPosts' class="container is-fluid mt-3">
+    @if ($this->ready_to_load_posts === false)
+      <span style="margin-block: 5em;" class="loader"></span>
+    @else
+      <table class="table is-fullwidth">
+        <thead></thead>
+        <tbody>
+          @foreach ($this->posts as $post)
+            <x-search.row :item="$post" :show-user="false" />
+          @endforeach
+        </tbody>
+      </table>
+      {{ $this->posts->links('pagination') }}
+    @endif
   </main>
 </div>
