@@ -1,10 +1,8 @@
 <?php
 
 use App\Http\Controllers\FileUploadController;
-use App\Http\Controllers\PostCollectionCommentsController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PostCollectionsController;
-use App\Http\Controllers\PostCommentsController;
 use App\Http\Livewire\Password\ForgotPassword;
 use App\Http\Livewire\Password\ResetPassword;
 use App\Http\Livewire\User\Login;
@@ -108,10 +106,7 @@ Route::middleware("auth")->group(function () {
         ->name("posts.edit")
         ->withTrashed()
         ->middleware("verified");
-    Route::get("/posts/{post}/comments", [
-        PostCommentsController::class,
-        "index",
-    ])
+    Route::get("/posts/{post}/comments", Post\Comments::class)
         ->name("posts.comments.index")
         ->withTrashed()
         ->middleware("verified");
@@ -135,10 +130,10 @@ Route::middleware("auth")->group(function () {
         ->name("collections.index")
         ->withTrashed()
         ->middleware("verified");
-    Route::get("/collections/{post_collection}/comments", [
-        PostCollectionCommentsController::class,
-        "index",
-    ])
+    Route::get(
+        "/collections/{post_collection}/comments",
+        Collection\Comments::class,
+    )
         ->name("collections.comments.index")
         ->withTrashed()
         ->middleware("verified");
