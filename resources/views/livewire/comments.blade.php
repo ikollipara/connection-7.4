@@ -40,7 +40,7 @@
             <br>
             {{ $comment->body }}
           </p>
-          @livewire('likes', ['likable' => $comment], key('likes' . $comment->id))
+          @livewire('like-button', ['likable' => $comment], key('like-button' . $comment->id))
         </section>
       </article>
     @endforeach

@@ -27,7 +27,7 @@
             </p>
           </div>
           <div class="level-item">
-            @livewire('likes', ['likable' => $post])
+            @livewire('like-button', ['likable' => $post])
           </div>
         </div>
         <div class="level-right">
