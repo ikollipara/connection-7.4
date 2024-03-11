@@ -187,6 +187,13 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
             ->exists();
     }
 
+    public function notifyFollowers(object $notification): void
+    {
+        $this->followers()->each(
+            fn(User $follower) => $follower->notify($notification),
+        );
+    }
+
     /**
      * Get the user's full name.
      * @return string The User's full name

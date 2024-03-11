@@ -3,17 +3,16 @@
 namespace App\Http\Livewire\Collection;
 
 use Livewire\Component;
-use App\Enums\Audience;
-use App\Enums\Category;
 use App\Models\PostCollection;
-use App\Models\User;
 use App\Notifications\NewFollowedCollection;
+use App\Traits\Livewire\HasAutosave;
+use App\Traits\Livewire\HasDispatch;
 use App\Traits\Livewire\HasMetadata;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Editor extends Component
 {
-    use AuthorizesRequests, HasMetadata;
+    use AuthorizesRequests, HasMetadata, HasDispatch, HasAutosave;
 
     public string $body;
     public PostCollection $post_collection;
@@ -21,19 +20,11 @@ class Editor extends Component
     /**
      * @param string|null $uuid
      */
-    public function mount($uuid = null)
+    public function mount($uuid = null): void
     {
         if ($post_collection = PostCollection::find($uuid)) {
-            $this->post_collection = $post_collection;
-            if (!array_key_exists("languages", $post_collection->metadata)) {
-                $post_collection->metadata = array_merge(
-                    $post_collection->metadata,
-                    [
-                        "languages" => [],
-                    ],
-                );
-            }
             $this->authorize("update", $post_collection);
+            $this->post_collection = $post_collection;
             $this->fill([
                 "grades" => $post_collection->metadata["grades"],
                 "standards" => $post_collection->metadata["standards"],
@@ -62,32 +53,6 @@ class Editor extends Component
         "languages" => ["array"],
     ];
 
-    public function updatedBody(string $value): void
-    {
-        if ($decoded = json_decode($value, true)) {
-            $this->post_collection->body = $decoded;
-            if ($this->post_collection->exists) {
-                $this->post_collection->save() and
-                    $this->dispatchBrowserEvent("editor-saved");
-            }
-        }
-    }
-
-    /**
-     * @param string $name
-     * @param mixed $value
-     */
-    public function updated(string $name, $value): void
-    {
-        if (
-            $name === "post_collection.title" and
-            $this->post_collection->exists
-        ) {
-            $this->post_collection->save() and
-                $this->dispatchBrowserEvent("editor-saved");
-        }
-    }
-
     public function save(): void
     {
         $this->validate();
@@ -96,40 +61,33 @@ class Editor extends Component
         if (!$this->post_collection->exists) {
             $this->post_collection->body = json_decode($this->body, true);
         }
-        if ($this->post_collection->save()) {
-            if ($this->post_collection->wasRecentlyPublished()) {
-                $this->dispatchBrowserEvent("success", [
-                    "message" => __("Collection published successfully!"),
-                ]);
-                $this->post_collection->user
-                    ->followers()
-                    ->each(
-                        fn(User $follower) => $follower->notify(
-                            new NewFollowedCollection($this->post_collection),
-                        ),
-                    );
-            } elseif ($this->post_collection->wasRecentlyCreated) {
-                $this->dispatchBrowserEvent("success", [
-                    "message" => __("Collection created successfully!"),
-                ]);
-            } else {
-                $this->dispatchBrowserEvent("success", [
-                    "message" => __("Collection saved successfully!"),
-                ]);
-            }
-            if ($this->post_collection->wasRecentlyCreated) {
-                $this->dispatchBrowserEvent("collection-created", [
-                    "url" => route("collections.edit", [
-                        "uuid" => $this->post_collection->id,
-                    ]),
-                ]);
-            }
-            $this->dispatchBrowserEvent("editor-saved");
-        } else {
+        if (!$this->post_collection->save()) {
             $this->dispatchBrowserEvent("error", [
-                "message" => __("Collection could not be saved."),
+                "message" => __(
+                    "Collection not saved!\n{$this->errorBag->all()}",
+                ),
             ]);
+            return;
         }
+        if ($this->post_collection->wasRecentlyPublished()) {
+            $message = __("Collection published!");
+            $this->post_collection->user->notifyFollowers(
+                new NewFollowedCollection($this->post_collection),
+            );
+        } elseif ($this->post_collection->wasRecentlyCreated) {
+            $message = __("Collection created!");
+            $this->dispatchBrowserEvent("collection-created", [
+                "url" => route("collections.edit", [
+                    "uuid" => $this->post_collection->id,
+                ]),
+            ]);
+        } else {
+            $message = __("Collection saved!");
+        }
+        $this->dispatchBrowserEvent("editor-saved");
+        $this->dispatchBrowserEvent("success", [
+            "message" => $message,
+        ]);
     }
 
     /**

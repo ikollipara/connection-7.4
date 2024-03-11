@@ -15,6 +15,19 @@ use Illuminate\Support\Str;
 use App\Traits\HasViews;
 use Laravel\Scout\Searchable;
 
+/**
+ * @property string $id
+ * @property string $title
+ * @property array<string, string> $body
+ * @property array<string, string|string[]> $metadata
+ * @property bool $published
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $user
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Comment> $comments
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Post> $posts
+ */
 class PostCollection extends Model implements Likable, Viewable, Commentable
 {
     use HasFactory,

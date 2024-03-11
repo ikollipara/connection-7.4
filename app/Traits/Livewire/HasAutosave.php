@@ -17,7 +17,7 @@ trait HasAutosave
                     $this->post->exists and
                         $this->post->save() and
                         $this->dispatchBrowserEvent("editor-saved");
-                } else {
+                } elseif (property_exists($this, "post_collection")) {
                     $this->post_collection->body = $decoded;
                     $this->post_collection->exists and
                         $this->post_collection->save() and
@@ -25,11 +25,17 @@ trait HasAutosave
                 }
             }
         } elseif ($field === "postTitle") {
+            if (!property_exists($this, "post")) {
+                return;
+            }
             $this->post->exists and
                 $this->post->save() and
                 $this->dispatchBrowserEvent("editor-saved");
         } elseif ($field === "post_collection.title") {
-            $this->post->exists and
+            if (!property_exists($this, "post_collection")) {
+                return;
+            }
+            $this->post_collection->exists and
                 $this->post_collection->save() and
                 $this->dispatchBrowserEvent("editor-saved");
         }

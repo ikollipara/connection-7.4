@@ -2,19 +2,17 @@
 
 namespace App\Http\Livewire\Post;
 
-use App\Enums\Audience;
-use App\Enums\Category;
 use App\Models\Post;
-use App\Models\User;
 use App\Notifications\NewFollowedPost;
 use App\Traits\Livewire\HasAutosave;
+use App\Traits\Livewire\HasDispatch;
 use App\Traits\Livewire\HasMetadata;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Editor extends Component
 {
-    use AuthorizesRequests, HasMetadata, HasAutosave;
+    use AuthorizesRequests, HasMetadata, HasAutosave, HasDispatch;
 
     public Post $post;
     public string $body;
@@ -26,8 +24,8 @@ class Editor extends Component
     public function mount($uuid = null): void
     {
         if ($post = Post::find($uuid)) {
-            $this->post = $post;
             $this->authorize("update", $post);
+            $this->post = $post;
             $this->fill([
                 "grades" => $post->metadata["grades"],
                 "standards" => $post->metadata["standards"],
@@ -64,48 +62,31 @@ class Editor extends Component
         if (!$this->post->exists) {
             $this->post->body = json_decode($this->body, true);
         }
-        if ($this->post->save()) {
-            if ($this->post->wasRecentlyPublished()) {
-                $this->dispatchBrowserEvent("success", [
-                    "message" => __("Post published!"),
-                ]);
-                $this->post->user
-                    ->followers()
-                    ->each(
-                        fn(User $follower) => $follower->notify(
-                            new NewFollowedPost($this->post),
-                        ),
-                    );
-            } else {
-                $this->dispatchBrowserEvent("success", [
-                    "message" => __("Post saved!"),
-                ]);
-            }
-            if (
-                $this->post->published and $this->post->wasChanged("published")
-            ) {
-                $this->dispatchBrowserEvent("success", [
-                    "message" => __("Post published!"),
-                ]);
-                $this->post->user->followers->each(function (User $follower) {
-                    $follower->notify(new NewFollowedPost($this->post));
-                });
-            } else {
-                $this->dispatchBrowserEvent("success", [
-                    "message" => __("Post saved!"),
-                ]);
-            }
-            if ($this->post->wasRecentlyCreated) {
-                $this->dispatchBrowserEvent("post-created", [
-                    "url" => route("posts.edit", ["uuid" => $this->post->id]),
-                ]);
-            }
-            $this->dispatchBrowserEvent("editor-saved");
-        } else {
+        if (!$this->post->save()) {
             $this->dispatchBrowserEvent("error", [
                 "message" => __("Post not saved!\n{$this->errorBag->all()}"),
             ]);
+            return;
         }
+        if ($this->post->wasRecentlyPublished()) {
+            $message = __("Post published!");
+            $this->post->user->notifyFollowers(
+                new NewFollowedPost($this->post),
+            );
+        } else {
+            $message = __("Post saved!");
+        }
+        $this->dispatchBrowserEvent("success", [
+            "message" => $message,
+        ]);
+        $this->dispatchBrowserEventIf(
+            $this->post->wasRecentlyCreated,
+            "post-created",
+            [
+                "url" => route("posts.edit", ["uuid" => $this->post->id]),
+            ],
+        );
+        $this->dispatchBrowserEvent("editor-saved");
     }
 
     /**
