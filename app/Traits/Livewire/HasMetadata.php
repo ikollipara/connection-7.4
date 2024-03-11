@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits;
+namespace App\Traits\Livewire;
 
 use App\Enums\Audience;
 use App\Enums\Category;
