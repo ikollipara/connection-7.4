@@ -16,34 +16,34 @@ class Row extends Component
 
     public function archive(): void
     {
-        if ($this->post->delete()) {
-            $this->dispatchBrowserEvent("post-removed", [
-                "id" => $this->post->id,
-            ]);
-            $this->dispatchBrowserEvent("success", [
-                "message" => __("Post archived successfully!"),
-            ]);
-        } else {
+        if (!$this->post->delete()) {
             $this->dispatchBrowserEvent("error", [
                 "message" => __("Post could not be archived!"),
             ]);
+            return;
         }
+        $this->dispatchBrowserEvent("post-removed", [
+            "id" => $this->post->id,
+        ]);
+        $this->dispatchBrowserEvent("success", [
+            "message" => __("Post archived successfully!"),
+        ]);
     }
 
     public function restore(): void
     {
-        if ($this->post->restore()) {
-            $this->dispatchBrowserEvent("post-removed", [
-                "id" => $this->post->id,
-            ]);
-            $this->dispatchBrowserEvent("success", [
-                "message" => __("Post restored successfully!"),
-            ]);
-        } else {
+        if (!$this->post->restore()) {
             $this->dispatchBrowserEvent("error", [
                 "message" => __("Post could not be restored!"),
             ]);
+            return;
         }
+        $this->dispatchBrowserEvent("post-removed", [
+            "id" => $this->post->id,
+        ]);
+        $this->dispatchBrowserEvent("success", [
+            "message" => __("Post restored successfully!"),
+        ]);
     }
 
     public function render()

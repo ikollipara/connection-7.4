@@ -104,7 +104,7 @@ class Post extends Model implements Likable, Viewable, Commentable
      * @param \Illuminate\Database\Eloquent\Builder<self> $query
      * @return \Illuminate\Database\Eloquent\Builder<self>
      */
-    public function scopePublished($query)
+    public function scopeWherePublished($query)
     {
         return $query->where("published", true);
     }

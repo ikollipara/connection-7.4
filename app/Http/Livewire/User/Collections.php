@@ -41,7 +41,7 @@ class Collections extends Component
         }
         return $this->user
             ->postCollections()
-            ->where("published", true)
+            ->wherePublished()
             ->when(
                 $this->search !== "",
                 fn($query) => $query->where(
@@ -50,8 +50,8 @@ class Collections extends Component
                     "%{$this->search}%",
                 ),
             )
-            ->orderBy("likes_count", "desc")
-            ->orderBy("views", "desc")
+            ->orderByDesc("likes_count")
+            ->orderByDesc("views")
             ->latest()
             ->paginate(10);
     }

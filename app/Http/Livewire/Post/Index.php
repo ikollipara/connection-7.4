@@ -4,23 +4,23 @@ namespace App\Http\Livewire\Post;
 
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\WithPagination;
 
 class Index extends Component
 {
-    use WithPagination;
+    use WithPagination, AuthorizesRequests;
 
     public string $status = "draft";
-    public User $user;
     public string $search = "";
     public bool $ready_to_load_posts = false;
 
     public function mount(): void
     {
+        $this->authorize("viewAny", auth()->user());
         $this->status = request()->query("status", "draft");
-        $this->user = auth()->user();
     }
 
     public function loadPosts(): void
@@ -38,7 +38,8 @@ class Index extends Component
                 $this->page,
             );
         }
-        return $this->user
+        return auth()
+            ->user()
             ->posts()
             ->status($this->status)
             ->when($this->search !== "", function ($query) {

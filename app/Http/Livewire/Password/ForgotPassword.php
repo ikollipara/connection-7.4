@@ -2,11 +2,13 @@
 
 namespace App\Http\Livewire\Password;
 
+use App\Traits\Livewire\HasDispatch;
 use Illuminate\Support\Facades\Password;
 use Livewire\Component;
 
 class ForgotPassword extends Component
 {
+    use HasDispatch;
     public string $email = "";
 
     /**
@@ -22,11 +24,10 @@ class ForgotPassword extends Component
 
         $status = Password::sendResetLink(["email" => $this->email]);
 
-        if ($status === Password::RESET_LINK_SENT) {
-            $this->dispatchBrowserEvent("success", ["message" => __($status)]);
-        } else {
-            $this->dispatchBrowserEvent("error", ["message" => __($status)]);
-        }
+        $this->dispatchBrowserEvent(
+            $status === Password::RESET_LINK_SENT ? "success" : "error",
+            ["message" => __($status)],
+        );
     }
 
     // @phpstan-ignore-next-line

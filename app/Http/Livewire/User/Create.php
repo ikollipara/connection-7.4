@@ -3,13 +3,14 @@
 namespace App\Http\Livewire\User;
 
 use App\Models\User;
+use App\Traits\Livewire\HasDispatch;
 use Livewire\Component;
 use Illuminate\Http\UploadedFile;
 use Livewire\WithFileUploads;
 
 class Create extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, HasDispatch;
 
     public User $user;
 
@@ -57,30 +58,34 @@ class Create extends Component
         $this->validateOnly($propertyName);
     }
 
+    public function updatedUserBio(): void
+    {
+        // @phpstan-ignore-next-line
+        $this->user->bio = json_decode($this->user->bio, true);
+    }
+
     /**
      * @return \Illuminate\Http\RedirectResponse|void
      */
     public function save()
     {
         $this->validate();
-        $this->user->bio = json_decode($this->user->bio, true);
         $this->user->fill(["password" => $this->password]);
-        if ($this->user->save()) {
-            if ($this->avatar) {
-                $this->user->update([
-                    "avatar" => $this->avatar->store("avatars", "public"),
-                ]);
-            }
-            auth()->login($this->user);
-            $this->dispatchBrowserEvent("success", [
-                "message" => __("You have successfully signed up!"),
-            ]);
-            return redirect()->route("home");
-        } else {
-            $this->dispatchBrowserEvent("error", [
-                "message" => __("There was an error signing up."),
+        $this->dispatchBrowserEventIf(!$this->user->save(), "error", [
+            "message" => __(
+                "There was an error signing up. {$this->errorBag->all()}",
+            ),
+        ]);
+        if ($this->avatar) {
+            $this->user->update([
+                "avatar" => $this->avatar->store("avatars", "public"),
             ]);
         }
+        auth()->login($this->user);
+        $this->dispatchBrowserEvent("success", [
+            "message" => __("You have successfully signed up!"),
+        ]);
+        return redirect()->route("home");
     }
 
     /**

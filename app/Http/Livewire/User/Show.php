@@ -38,9 +38,9 @@ class Show extends Component
         }
         return $this->user
             ->posts()
-            ->where("published", true)
-            ->orderBy("likes_count", "desc")
-            ->orderBy("views", "desc")
+            ->wherePublished()
+            ->orderByDesc("likes_count")
+            ->orderByDesc("views")
             ->limit(10)
             ->get();
     }
@@ -55,9 +55,9 @@ class Show extends Component
         }
         return $this->user
             ->postCollections()
-            ->where("published", true)
-            ->orderBy("likes_count", "desc")
-            ->orderBy("views", "desc")
+            ->wherePublished()
+            ->orderByDesc("likes_count")
+            ->orderByDesc("views")
             ->limit(10)
             ->get();
     }

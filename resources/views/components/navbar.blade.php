@@ -69,7 +69,7 @@
         </x-nav.dropdown>
         <x-nav.avatar />
         <li class="navbar-item">
-          @livewire('user.logout', ['user' => auth()->user()])
+          @livewire('user.logout')
         </li>
       @else
         <x-nav.item is-button class="is-outlined" route="{{ route('registration.create') }}">Sign Up</x-nav.item>

@@ -108,6 +108,16 @@ class PostCollection extends Model implements Likable, Viewable, Commentable
     }
 
     /**
+     * Get all the published post collections.
+     * @param \Illuminate\Database\Eloquent\Builder<self> $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWherePublished($query)
+    {
+        return $query->where("published", true);
+    }
+
+    /**
      * Convert Post to Searchable Array
      * @return array<string, mixed>
      */

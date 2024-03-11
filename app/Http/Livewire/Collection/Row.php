@@ -30,34 +30,34 @@ class Row extends Component
 
     public function archive(): void
     {
-        if ($this->post_collection->delete()) {
-            $this->dispatchBrowserEvent("collection-removed", [
-                "id" => $this->post_collection->id,
-            ]);
-            $this->dispatchBrowserEvent("success", [
-                "message" => "Collection archived successfully!",
-            ]);
-        } else {
+        if (!$this->post_collection->isPublished()) {
             $this->dispatchBrowserEvent("error", [
-                "message" => "Collection could not be archived!",
+                "message" => "Collection is already archived!",
             ]);
+            return;
         }
+        $this->dispatchBrowserEvent("collection-removed", [
+            "id" => $this->post_collection->id,
+        ]);
+        $this->dispatchBrowserEvent("success", [
+            "message" => "Collection archived successfully!",
+        ]);
     }
 
     public function restore(): void
     {
-        if ($this->post_collection->restore()) {
-            $this->dispatchBrowserEvent("collection-removed", [
-                "id" => $this->post_collection->id,
-            ]);
-            $this->dispatchBrowserEvent("success", [
-                "message" => "Collection restored successfully!",
-            ]);
-        } else {
+        if (!$this->post_collection->restore()) {
             $this->dispatchBrowserEvent("error", [
                 "message" => "Collection could not be restored!",
             ]);
+            return;
         }
+        $this->dispatchBrowserEvent("collection-removed", [
+            "id" => $this->post_collection->id,
+        ]);
+        $this->dispatchBrowserEvent("success", [
+            "message" => "Collection restored successfully!",
+        ]);
     }
 
     /** @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory */

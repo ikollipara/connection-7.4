@@ -2,12 +2,13 @@
 
 namespace App\Http\Livewire\User;
 
+use App\Traits\Livewire\HasDispatch;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 
 class Login extends Component
 {
+    use HasDispatch;
     public string $email = "";
     public string $password = "";
     public bool $remember_me = false;
@@ -37,19 +38,19 @@ class Login extends Component
         $this->validate();
 
         if (
-            auth()->attempt(
+            !auth()->attempt(
                 $this->only(["email", "password"]),
                 $this->remember_me,
             )
         ) {
-            session()->regenerate();
-            return redirect()->intended(route("home"), 303);
-        } else {
             Log::info("User {$this->email} failed to log in.");
             $this->dispatchBrowserEvent("error", [
                 "message" => __("Invalid credentials!"),
             ]);
+            return;
         }
+        session()->regenerate();
+        return redirect()->to(route("home"), 303);
     }
 
     /**

@@ -40,9 +40,9 @@ class Posts extends Component
                 $this->page,
             );
         }
-        return Post::query()
-            ->where("user_id", $this->user->id)
-            ->where("published", true)
+        return $this->user
+            ->posts()
+            ->wherePublished()
             ->when($this->search !== "", function ($query) {
                 return $query->where("title", "like", "%{$this->search}%");
             })

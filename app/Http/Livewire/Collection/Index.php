@@ -3,8 +3,6 @@
 namespace App\Http\Livewire\Collection;
 
 use Livewire\Component;
-use App\Models\PostCollection;
-use Illuminate\Support\Collection;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
@@ -15,7 +13,6 @@ class Index extends Component
     use WithPagination;
 
     public string $status = "draft";
-    public User $user;
     public string $search = "";
     public bool $ready_to_load_collections = false;
 
