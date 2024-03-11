@@ -8,7 +8,7 @@ use App\Enums\Category;
 use App\Models\PostCollection;
 use App\Models\User;
 use App\Notifications\NewFollowedCollection;
-use App\Traits\HasMetadata;
+use App\Traits\Livewire\HasMetadata;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class Editor extends Component

@@ -7,8 +7,8 @@ use App\Enums\Category;
 use App\Models\Post;
 use App\Models\User;
 use App\Notifications\NewFollowedPost;
-use App\Traits\HasAutosave;
-use App\Traits\HasMetadata;
+use App\Traits\Livewire\HasAutosave;
+use App\Traits\Livewire\HasMetadata;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
@@ -27,11 +27,6 @@ class Editor extends Component
     {
         if ($post = Post::find($uuid)) {
             $this->post = $post;
-            if (!array_key_exists("languages", $post->metadata)) {
-                $post->metadata = array_merge($post->metadata, [
-                    "languages" => [],
-                ]);
-            }
             $this->authorize("update", $post);
             $this->fill([
                 "grades" => $post->metadata["grades"],

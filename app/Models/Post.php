@@ -166,5 +166,13 @@ class Post extends Model implements Likable, Viewable, Commentable
                 $post->slug = Str::slug("{$post->title} {$post->id} Post");
             }
         });
+
+        static::retrieved(function (Post $post) {
+            if (!array_key_exists("languages", $post->metadata)) {
+                $post->metadata = array_merge($post->metadata, [
+                    "languages" => [],
+                ]);
+            }
+        });
     }
 }

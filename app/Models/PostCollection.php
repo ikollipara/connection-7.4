@@ -153,5 +153,16 @@ class PostCollection extends Model implements Likable, Viewable, Commentable
                 );
             }
         });
+
+        static::retrieved(function (PostCollection $postCollection) {
+            if (!array_key_exists("languages", $postCollection->metadata)) {
+                $postCollection->metadata = array_merge(
+                    $postCollection->metadata,
+                    [
+                        "languages" => [],
+                    ],
+                );
+            }
+        });
     }
 }
