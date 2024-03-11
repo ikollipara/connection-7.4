@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Hashed;
 use App\Events\UserFollowed;
 use App\Traits\HasUuids;
 use Illuminate\Auth\Events\Registered;
@@ -78,6 +79,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         "bio" => "array",
         "grades" => "array",
         "no_comment_notifications" => "boolean",
+        "password" => Hashed::class,
     ];
 
     /** @var array<string, mixed> */
@@ -212,13 +214,11 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 
     public static function booted()
     {
-        // Before creating the user,
-        // we hash the password and normalize the email.
+        // Before creating the user, we normalize the email.
         static::creating(function (User $user) {
             $user->email = Str::of($user->email)
                 ->trim()
                 ->lower();
-            $user->password = Hash::make($user->password);
         });
         static::created(function (User $user) {
             event(new Registered($user));
