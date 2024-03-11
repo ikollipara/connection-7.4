@@ -47,6 +47,7 @@ trait HasViews
 
     protected function getViewEvent(): string
     {
-        return $this->viewEvent ?? class_basename(self::class) . "Viewed";
+        return $this->viewEvent ??
+            "\App\Events\\" . class_basename(self::class) . "Viewed";
     }
 }

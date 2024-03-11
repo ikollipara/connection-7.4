@@ -85,6 +85,7 @@ trait HasLikes
     }
     protected function getLikeEvent(): string
     {
-        return $this->likeEvent ?? class_basename(self::class) . "Liked";
+        return $this->likeEvent ??
+            "\App\Events\\" . class_basename(self::class) . "Liked";
     }
 }
