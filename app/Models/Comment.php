@@ -13,11 +13,6 @@ class Comment extends Model implements Likable
 {
     use HasFactory, HasUuids, HasLikes;
 
-    protected string $likeTable = "comment_likes";
-    protected string $likeColumn = "comment_id";
-    /** @var class-string */
-    protected string $likeEvent = CommentLiked::class;
-
     /**
      * The attributes that are mass assignable.
      *

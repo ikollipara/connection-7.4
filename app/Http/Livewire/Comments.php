@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Contracts\Commentable;
 use App\Models\Comment;
 use App\Notifications\CommentAdded;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -14,17 +15,13 @@ class Comments extends Component
 {
     use WithPagination;
 
-    /** @var \App\Models\Post|\App\Models\PostCollection */
-    public $item;
+    public Commentable $commentable;
 
-    public string $comment_body = "";
+    public string $body = "";
 
-    /**
-     * @param \App\Models\Post|\App\Models\PostCollection $item
-     */
-    public function mount($item): void
+    public function mount(Commentable $commentable): void
     {
-        $this->item = $item;
+        $this->commentable = $commentable;
     }
 
     /**
@@ -33,15 +30,15 @@ class Comments extends Component
     public function rules()
     {
         return [
-            "comment_body" => ["required", "min:1"],
+            "body" => ["required", "min:1"],
         ];
     }
 
     public function getCommentsProperty(): LengthAwarePaginator
     {
-        return Comment::query()
-            ->where("commentable_id", $this->item->id)
-            ->orderByDesc("created_at")
+        return $this->commentable
+            ->comments()
+            ->latest()
             ->with("user")
             ->paginate(10);
     }
@@ -51,13 +48,13 @@ class Comments extends Component
         $this->validate();
         $comment = $this->item->comments()->make([
             "user_id" => auth()->id(),
-            "body" => $this->comment_body,
+            "body" => $this->body,
         ]);
         if ($comment->save()) {
             $this->dispatchBrowserEvent("success", [
                 "message" => "Commented successfully!",
             ]);
-            $this->comment_body = "";
+            $this->body = "";
             $commenter = $comment->user;
             if (
                 ($user = $this->item->user) and

@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /**
  * Trait HasLikes
@@ -18,8 +19,8 @@ trait HasLikes
      */
     public function likes(): int
     {
-        return DB::table($this->likeTable)
-            ->where($this->likeColumn, $this->id)
+        return DB::table($this->getLikeTable())
+            ->where($this->getLikeColumn(), $this->id)
             ->count();
     }
 
@@ -32,9 +33,9 @@ trait HasLikes
      */
     public function isLikedBy(User $user): bool
     {
-        return DB::table($this->likeTable)
+        return DB::table($this->getLikeTable())
             ->where("user_id", $user->id)
-            ->where($this->likeColumn, $this->id)
+            ->where($this->getLikeColumn(), $this->id)
             ->exists();
     }
 
@@ -47,12 +48,12 @@ trait HasLikes
      */
     public function like(User $user): void
     {
-        DB::table($this->likeTable)->insert([
+        DB::table($this->getLikeTable())->insert([
             "user_id" => $user->id,
-            $this->likeColumn => $this->id,
+            $this->getLikeColumn() => $this->id,
         ]);
 
-        $this->likeEvent::dispatch($this);
+        $this->getLikeEvent()::dispatch($this);
     }
 
     /**
@@ -64,11 +65,26 @@ trait HasLikes
      */
     public function unlike(User $user): void
     {
-        DB::table($this->likeTable)
+        DB::table($this->getLikeTable())
             ->where("user_id", $user->id)
-            ->where($this->likeColumn, $this->id)
+            ->where($this->getLikeColumn(), $this->id)
             ->delete();
 
-        $this->likeEvent::dispatch($this);
+        $this->getLikeEvent()::dispatch($this);
+    }
+
+    protected function getLikeTable(): string
+    {
+        return $this->likeTable ??
+            Str::of(class_basename(self::class))->snake() . "_likes";
+    }
+    protected function getLikeColumn(): string
+    {
+        return $this->likeColumn ??
+            Str::of(class_basename(self::class))->snake() . "_id";
+    }
+    protected function getLikeEvent(): string
+    {
+        return $this->likeEvent ?? class_basename(self::class) . "Liked";
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\Commentable;
 use App\Contracts\Likable;
 use App\Contracts\Viewable;
 use App\Traits\HasComments;
@@ -11,10 +12,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
-use App\Events\PostLiked;
 use App\Traits\HasViews;
 use Laravel\Scout\Searchable;
-use App\Events\PostViewed;
 
 /**
  * App\Models\Post
@@ -29,7 +28,7 @@ use App\Events\PostViewed;
  * @property-read \App\Models\User $user
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Comment> $comments
  */
-class Post extends Model implements Likable, Viewable
+class Post extends Model implements Likable, Viewable, Commentable
 {
     use HasFactory,
         HasUuids,
@@ -38,15 +37,6 @@ class Post extends Model implements Likable, Viewable
         HasLikes,
         HasViews,
         Searchable;
-
-    protected string $viewTable = "post_views";
-    protected string $viewColumn = "post_id";
-    /** @var class-string */
-    protected string $viewEvent = PostViewed::class;
-    protected string $likeTable = "post_likes";
-    protected string $likeColumn = "post_id";
-    /** @var class-string */
-    protected string $likeEvent = PostLiked::class;
 
     /**
      * The attributes that are mass assignable.
