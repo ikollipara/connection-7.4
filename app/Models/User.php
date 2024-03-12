@@ -12,7 +12,6 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
@@ -67,6 +66,8 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         "password",
         "no_comment_notifications",
         "type",
+        "years_of_experience",
+        "is_preservice",
     ];
 
     /**
@@ -93,6 +94,8 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     protected $attributes = [
         "password" => "",
         "gender" => "",
+        "is_preservice" => false,
+        "school" => "",
     ];
 
     /**
@@ -237,5 +240,15 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         static::created(function (User $user) {
             event(new Registered($user));
         });
+    }
+
+    /**
+     * Scope a query to only include preservice users.
+     * @param \Illuminate\Database\Eloquent\Builder<self> $query
+     * @return \Illuminate\Database\Eloquent\Builder<self>
+     */
+    public function scopePreservice($query)
+    {
+        return $query->where("is_preservice", true);
     }
 }

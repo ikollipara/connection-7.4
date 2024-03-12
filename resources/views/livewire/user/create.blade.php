@@ -20,7 +20,15 @@
             </div>
           </div>
         </div>
-        <x-forms.input label="School" name="school" wire:model.debounce.200ms="user.school" />
+        <label class="checkbox">
+          <input type="checkbox" wire:model='user.is_preservice'>
+          I am a preservice teacher
+        </label>
+        @if ($this->user->is_preservice === false)
+          <x-forms.input label="School" name="school" wire:model.debounce.200ms="user.school" />
+          <x-forms.input label="Years of Experience" name="years_of_experience" type="number"
+            wire:model.debounce.200ms="user.years_of_experience" />
+        @endif
         <x-forms.input label="Subject" name="subject" wire:model.debounce.200ms="user.subject" />
       </x-forms.step>
       <x-forms.step step="2" current-step="currentStep">

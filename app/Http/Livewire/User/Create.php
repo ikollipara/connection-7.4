@@ -36,6 +36,8 @@ class Create extends Component
         "user.subject" => ["required"],
         "user.school" => ["required"],
         "password_confirmation" => ["same:password", "required"],
+        "user.years_of_experience" => ["required", "integer", "min:0"],
+        "user.is_preservice" => ["required", "boolean"],
     ];
 
     /** @var string[] */
