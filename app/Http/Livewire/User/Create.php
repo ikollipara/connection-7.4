@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Traits\Livewire\HasDispatch;
 use Livewire\Component;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
 use Livewire\WithFileUploads;
 
 class Create extends Component
@@ -20,6 +21,7 @@ class Create extends Component
     public string $password = "";
     public string $password_confirmation = "";
     public string $full_name = "";
+    public string $bio = '{"blocks": []}';
     public bool $above_19 = false;
 
     /** @var string[]|array<string, array<string>> */
@@ -35,12 +37,16 @@ class Create extends Component
             "required",
         ],
         "avatar" => ["image", "nullable"],
-        "user.bio" => ["json", "required"],
+        "bio" => ["json"],
         "user.grades" => ["array", "required"],
         "user.subject" => ["required"],
-        "user.school" => ["required"],
+        "user.school" => ["required_unless:user.is_preservice,true"],
         "password_confirmation" => ["same:password", "required"],
-        "user.years_of_experience" => ["required", "integer", "min:0"],
+        "user.years_of_experience" => [
+            "integer",
+            "min:0",
+            "required_unless:user.is_preservice,true",
+        ],
         "user.is_preservice" => ["required", "boolean"],
     ];
 
@@ -64,10 +70,9 @@ class Create extends Component
         $this->validateOnly($propertyName);
     }
 
-    public function updatedUserBio(): void
+    public function updatedBio(): void
     {
-        // @phpstan-ignore-next-line
-        $this->user->bio = json_decode($this->user->bio, true);
+        $this->user->bio = json_decode($this->bio, true);
     }
 
     /**
@@ -75,14 +80,24 @@ class Create extends Component
      */
     public function save()
     {
-        $this->validate();
+        try {
+            $this->validate();
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->dispatchBrowserEvent("error", [
+                "message" => __(
+                    "There was an error signing up. " .
+                        implode(", ", $e->validator->errors()->all()),
+                ),
+            ]);
+        }
         $this->user->fill(["password" => $this->password]);
         if ($this->above_19 and $this->full_name === $this->user->full_name()) {
             $this->user->consented = true;
         }
         $this->dispatchBrowserEventIf(!$this->user->save(), "error", [
             "message" => __(
-                "There was an error signing up. {$this->errorBag->all()}",
+                "There was an error signing up." .
+                    implode(", ", $this->errorBag->all()),
             ),
         ]);
         if ($this->avatar) {

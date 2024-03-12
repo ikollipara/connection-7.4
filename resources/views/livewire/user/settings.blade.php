@@ -59,27 +59,28 @@
           See Consent Status
         </button>
         <x-modal title="conneCTION Consent Form" show-var="show">
-          <x-research.consent-form />
-          <span>
-            <div class="field">
-              <label class="checkbox">
-                <input type="checkbox" wire:model='user.consented'>
-                I want to participate in the conneCTION Research Study
-              </label>
-            </div>
-            @if ($this->user->consented)
+          <x-research.consent-form>
+            <span>
               <div class="field">
                 <label class="checkbox">
-                  <input type="checkbox" wire:model='above_19'>
-                  I am 19 years or older
+                  <input type="checkbox" wire:model='user.consented'>
+                  I want to participate in the conneCTION Research Study
                 </label>
               </div>
-              @if ($this->above_19)
-                <x-forms.input label="Please enter your full name to consent." wire:model.debounce.200ms="full_name"
-                  name="full_name" />
+              @if ($this->user->consented)
+                <div class="field">
+                  <label class="checkbox">
+                    <input type="checkbox" wire:model='above_19'>
+                    I am 19 years or older
+                  </label>
+                </div>
+                @if ($this->above_19)
+                  <x-forms.input label="Please enter your full name to consent." wire:model.debounce.200ms="full_name"
+                    name="full_name" />
+                @endif
               @endif
-            @endif
-          </span>
+            </span>
+          </x-research.consent-form>
         </x-modal>
         <hr>
         <div>

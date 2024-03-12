@@ -93,6 +93,8 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         "gender" => "",
         "is_preservice" => false,
         "school" => "",
+        "bio" => '{"blocks": []}',
+        "years_of_experience" => 0,
     ];
 
     /**

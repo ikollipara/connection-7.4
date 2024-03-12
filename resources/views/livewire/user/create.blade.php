@@ -36,7 +36,7 @@
         <div class="level is-justify-content-center">
           <x-forms.image label="Avatar" name="avatar" wire:model.debounce.200ms="avatar" />
         </div>
-        <x-editor name="bio" wire:model="user.bio" cannot-upload />
+        <x-editor name="bio" wire:model="bio" cannot-upload />
       </x-forms.step>
       <x-forms.step step="3" current-step="currentStep">
         <h2 class="subtitle is-3 has-text-centered">Your Password</h2>
@@ -63,24 +63,24 @@
       </x-forms.step>
       <x-forms.step x-data='{checked: true}' step="4" current-step="currentStep" is-final>
         <h2 class="subtitle is-3 has-text-centered">conneCTION Research Study</h2>
-        <x-research.consent-form />
-        <hr>
-        <div class="field">
-          <label class="checkbox">
-            <input type="checkbox" x-model='checked'>
-            I want to participate in the conneCTION Research Study
-          </label>
-        </div>
-        <div class="field">
-          <label class="checkbox" x-bind:class="{ 'is-hidden': !checked }">
-            <input type="checkbox" wire:model='above_19'>
-            I am 19 years or older
-          </label>
-        </div>
-        @if ($this->above_19)
-          <x-forms.input label="Please enter your full name to consent." wire:model.debounce.200ms="full_name"
-            name="full_name" />
-        @endif
+        <x-research.consent-form>
+          <div class="field">
+            <label class="checkbox">
+              <input type="checkbox" x-model='checked'>
+              I want to participate in the conneCTION Research Study
+            </label>
+          </div>
+          <div class="field">
+            <label class="checkbox" x-bind:class="{ 'is-hidden': !checked }">
+              <input type="checkbox" wire:model='above_19'>
+              I am 19 years or older
+            </label>
+          </div>
+          @if ($this->above_19)
+            <x-forms.input label="Please enter your full name to consent." wire:model.debounce.200ms="full_name"
+              name="full_name" />
+          @endif
+        </x-research.consent-form>
       </x-forms.step>
     </form>
   </main>
