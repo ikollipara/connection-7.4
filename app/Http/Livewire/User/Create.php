@@ -19,11 +19,15 @@ class Create extends Component
 
     public string $password = "";
     public string $password_confirmation = "";
+    public string $full_name = "";
+    public bool $above_19 = false;
 
     /** @var string[]|array<string, array<string>> */
     protected $rules = [
         "user.first_name" => "required|string",
         "user.last_name" => "required|string",
+        "above_19" => "required|boolean",
+        "full_name" => "string|required",
         "user.email" => "required|email|unique:users,email",
         "password" => [
             "string",
@@ -73,6 +77,9 @@ class Create extends Component
     {
         $this->validate();
         $this->user->fill(["password" => $this->password]);
+        if ($this->above_19 and $this->full_name === $this->user->full_name()) {
+            $this->user->consented = true;
+        }
         $this->dispatchBrowserEventIf(!$this->user->save(), "error", [
             "message" => __(
                 "There was an error signing up. {$this->errorBag->all()}",

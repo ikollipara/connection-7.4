@@ -30,6 +30,9 @@ use Parental\HasChildren;
  * @property array<string> $grades
  * @property string $email
  * @property bool $no_comment_notifications
+ * @property bool $consented
+ * @property bool $is_preservice
+ * @property int $years_of_experience
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at

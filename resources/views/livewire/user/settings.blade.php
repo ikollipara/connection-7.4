@@ -42,17 +42,45 @@
           </div>
         </div>
       </div>
-      <div class="column is-8">
+      <div x-data="{ show: false }" class="column is-8">
         <x-forms.input wire:model.defer='user.first_name' label="First Name" name="first_name" />
         <x-forms.input wire:model.defer='user.last_name' label="Last Name" name="last_name" />
         <x-forms.input wire:model.defer='user.email' label="Email" name="email" type="email" />
         <x-forms.input wire:model.defer='user.school' label="School" name="school" />
         <x-forms.input wire:model.defer='user.subject' label="Subject" name="subject" />
         <x-forms.grades multiple wire:model.defer='user.grades' label="grades" name="grades" />
-        <label class="checkbox">
-          <input type="checkbox" wire:model.defer='user.no_comment_notifications'>
-          I do not want to recieve comment notifications
-        </label>
+        <div class="field">
+          <label class="checkbox">
+            <input type="checkbox" wire:model.defer='user.no_comment_notifications'>
+            I do not want to recieve comment notifications
+          </label>
+        </div>
+        <button type="button" @@click='show = true;' class="button is-primary">
+          See Consent Status
+        </button>
+        <x-modal title="conneCTION Consent Form" show-var="show">
+          <x-research.consent-form />
+          <span>
+            <div class="field">
+              <label class="checkbox">
+                <input type="checkbox" wire:model='user.consented'>
+                I want to participate in the conneCTION Research Study
+              </label>
+            </div>
+            @if ($this->user->consented)
+              <div class="field">
+                <label class="checkbox">
+                  <input type="checkbox" wire:model='above_19'>
+                  I am 19 years or older
+                </label>
+              </div>
+              @if ($this->above_19)
+                <x-forms.input label="Please enter your full name to consent." wire:model.debounce.200ms="full_name"
+                  name="full_name" />
+              @endif
+            @endif
+          </span>
+        </x-modal>
         <hr>
         <div>
           <label class="label">Bio</label>

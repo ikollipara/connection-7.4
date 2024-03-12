@@ -1,6 +1,7 @@
 @props(['step', 'currentStep', 'isFinal' => false])
 
-<section x-show="{{ $currentStep }} == {{ $step }}">
+<section {{ $attributes->except(['step', 'isFinal', 'currentStep']) }}
+  x-show="{{ $currentStep }} == {{ $step }}">
   {{ $slot }}
   <div class="field is-group is-grouped-centered">
     <div class="control">
