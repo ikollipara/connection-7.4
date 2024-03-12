@@ -41,12 +41,7 @@ use Parental\HasChildren;
  */
 class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
-    use HasApiTokens,
-        HasFactory,
-        Notifiable,
-        HasUuids,
-        PasswordsCanResetTrait,
-        HasChildren;
+    use HasApiTokens, HasFactory, Notifiable, HasUuids, PasswordsCanResetTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -65,7 +60,6 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         "email",
         "password",
         "no_comment_notifications",
-        "type",
         "years_of_experience",
         "is_preservice",
     ];
