@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
+use Parental\HasChildren;
 
 /**
  * App\Models\User
@@ -41,7 +42,12 @@ use Illuminate\Support\Str;
  */
 class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
 {
-    use HasApiTokens, HasFactory, Notifiable, HasUuids, PasswordsCanResetTrait;
+    use HasApiTokens,
+        HasFactory,
+        Notifiable,
+        HasUuids,
+        PasswordsCanResetTrait,
+        HasChildren;
 
     /**
      * The attributes that are mass assignable.
@@ -60,6 +66,7 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         "email",
         "password",
         "no_comment_notifications",
+        "type",
     ];
 
     /**

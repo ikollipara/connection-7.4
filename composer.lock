@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "31f7e964b867040e31b0e4f8d7a43f5d",
+    "content-hash": "bf33705e93311f88ee2786a16ef4d9da",
     "packages": [
         {
             "name": "algolia/algoliasearch-client-php",
@@ -5645,6 +5645,57 @@
                 }
             ],
             "time": "2023-09-12T10:09:58+00:00"
+        },
+        {
+            "name": "tightenco/parental",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tighten/parental.git",
+                "reference": "2ca278206b08657a012ce06182394bd59b06ded9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tighten/parental/zipball/2ca278206b08657a012ce06182394bd59b06ded9",
+                "reference": "2ca278206b08657a012ce06182394bd59b06ded9",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^8.0",
+                "illuminate/events": "^8.0",
+                "php": "^7.4|^8.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^6.0",
+                "phpunit/phpunit": "^8.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Parental\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Caleb Porzio",
+                    "email": "calebporzio@gmail.com"
+                }
+            ],
+            "description": "A simple eloquent trait that allows relationships to be accessed through child models.",
+            "support": {
+                "source": "https://github.com/tighten/parental/tree/v1.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/calebporzio",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-10-08T07:44:57+00:00"
         },
         {
             "name": "tightenco/ziggy",
