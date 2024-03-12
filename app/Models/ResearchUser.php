@@ -5,7 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Parental\HasParent;
 
-class ResearchUser extends Model
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Study> $studies
+ */
+class ResearchUser extends User
 {
     use HasParent;
 
@@ -20,4 +23,13 @@ class ResearchUser extends Model
         "bio" => '{"blocks": []}',
         "subject" => "",
     ];
+
+    /**
+     * The studies that belong to the research user.
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Study>
+     */
+    public function studies()
+    {
+        return $this->hasMany(Study::class, "user_id", "id");
+    }
 }
