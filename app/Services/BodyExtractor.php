@@ -32,16 +32,16 @@ class BodyExtractor
             case "header":
                 return $block["data"]["text"];
             case "attaches":
-                if ($block["data"]["file"]["name"] !== null) {
+                if (array_key_exists("name", $block["data"]["file"])) {
                     return $block["data"]["file"]["name"];
-                } elseif ($block["data"]["file"]["url"] !== null) {
+                } elseif (array_key_exists("url", $block["data"]["file"])) {
                     return $block["data"]["file"]["url"];
                 }
                 return "";
             case "delimiter":
-                return "";
+                return "\n***\n";
             case "image":
-                if ($block["data"]["caption"] !== null) {
+                if (array_key_exists("caption", $block["data"])) {
                     return $block["data"]["caption"];
                 }
                 return $block["data"]["file"]["url"];
@@ -50,7 +50,7 @@ class BodyExtractor
                     ->map(fn($item) => $item["content"])
                     ->join("\n");
             case "quote":
-                if ($block["data"]["caption"] !== null) {
+                if (array_key_exists("caption", $block["data"])) {
                     return $block["data"]["text"] . $block["data"]["caption"];
                 }
                 return $block["data"]["text"];
@@ -62,6 +62,13 @@ class BodyExtractor
                             ->join("\t"),
                     )
                     ->join("\n");
+            case "embed":
+                return $block["data"]["service"] .
+                    " " .
+                    $block["data"]["embed"] .
+                    (array_key_exists("caption", $block["data"])
+                        ? " " . $block["data"]["caption"]
+                        : "");
             case "code":
                 return $block["data"]["code"];
             default:
