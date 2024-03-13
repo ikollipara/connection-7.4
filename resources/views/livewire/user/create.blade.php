@@ -61,7 +61,7 @@
         <x-forms.password label="Confirm Password" name="password_confirmation"
           wire:model.debounce.200ms="password_confirmation" />
       </x-forms.step>
-      <x-forms.step x-data='{checked: true}' step="4" current-step="currentStep" is-final>
+      <section x-data='{checked: true}' x-show="currentStep === 4">
         <h2 class="subtitle is-3 has-text-centered">conneCTION Research Study</h2>
         <x-research.consent-form>
           <div class="field">
@@ -81,7 +81,17 @@
               name="full_name" />
           @endif
         </x-research.consent-form>
-      </x-forms.step>
+        <div class="field is-group is-grouped-centered">
+          <div class="control">
+            <button type="button" x-on:click="currentStep--" class="button is-primary is-outlined">
+              Back
+            </button>
+            <button x-bind:disabled="checked && !$wire.user.consented" type="submit" class="button is-primary">
+              Submit
+            </button>
+          </div>
+        </div>
+      </section>
     </form>
   </main>
 </div>

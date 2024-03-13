@@ -28,6 +28,7 @@ class Create extends Component
     protected $rules = [
         "user.first_name" => "required|string",
         "user.last_name" => "required|string",
+        "user.consented" => "boolean|nullable",
         "above_19" => "required|boolean",
         "full_name" => "string|required",
         "user.email" => "required|email|unique:users,email",
@@ -64,10 +65,18 @@ class Create extends Component
 
     /**
      * @param mixed $propertyName
+     * @param mixed $value
      */
-    public function updated($propertyName): void
+    public function updated($propertyName, $value): void
     {
         $this->validateOnly($propertyName);
+        if ($propertyName === "full_name") {
+            ($this->user->consented = $value === $this->user->full_name()) and
+                $this->above_19;
+        } elseif ($propertyName === "above_19") {
+            ($this->user->consented =
+                $this->full_name === $this->user->full_name()) and $value;
+        }
     }
 
     public function updatedBio(): void
