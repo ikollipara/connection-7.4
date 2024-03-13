@@ -56,11 +56,7 @@ class BodyExtractor
                 return $block["data"]["text"];
             case "table":
                 return collect($block["data"]["content"])
-                    ->map(
-                        fn($row) => collect($row)
-                            ->map(fn($cell) => $cell["content"])
-                            ->join("\t"),
-                    )
+                    ->map(fn($row) => collect($row)->join("\t"))
                     ->join("\n");
             case "embed":
                 return $block["data"]["service"] .
