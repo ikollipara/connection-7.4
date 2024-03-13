@@ -2,7 +2,7 @@
   <x-hero class="is-primary">
     <h1 class="title">{{ Str::of($this->status)->title() }} Collections</h1>
     <x-forms.input wire:target='search' wire:loading.class='is-loading' label="" placeholder="Filter..." name="Filter"
-      wire:model="search" />
+      wire:model.debounce.200ms="search" />
     @if ($this->status == 'archived')
       <p class="content">
         Archived collections are similar to unlisted videos, if someone has the link they can access. But the video is
