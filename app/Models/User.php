@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\Hashed;
 use App\Events\UserFollowed;
+use App\Notifications\QualtricsSurvey;
 use App\Traits\HasUuids;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Passwords\CanResetPassword as PasswordsCanResetTrait;
@@ -15,7 +16,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
-use Parental\HasChildren;
 
 /**
  * App\Models\User
@@ -238,6 +238,13 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         });
         static::created(function (User $user) {
             event(new Registered($user));
+        });
+        static::saved(function (User $user) {
+            if ($user->consented and $user->wasChanged("consented")) {
+                $url =
+                    env("APP_QUALTRICS_SCALES_LINK") . "?user_id=" . $user->id;
+                $user->notify(new QualtricsSurvey($url));
+            }
         });
     }
 
