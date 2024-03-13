@@ -32,7 +32,12 @@ class BodyExtractor
             case "header":
                 return $block["data"]["text"];
             case "attaches":
-                return $block["data"]["file"]["name"];
+                if ($block["data"]["file"]["name"] !== null) {
+                    return $block["data"]["file"]["name"];
+                } elseif ($block["data"]["file"]["url"] !== null) {
+                    return $block["data"]["file"]["url"];
+                }
+                return "";
             case "delimiter":
                 return "";
             case "image":
