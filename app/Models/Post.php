@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\Commentable;
 use App\Contracts\Likable;
 use App\Contracts\Viewable;
+use App\Services\BodyExtractor;
 use App\Traits\HasComments;
 use App\Traits\HasLikes;
 use App\Traits\HasUuids;
@@ -121,6 +122,7 @@ class Post extends Model implements Likable, Viewable, Commentable
         return [
             "id" => $this->id,
             "title" => $this->title,
+            "body" => BodyExtractor::extract($this->body),
             "category" => $this->metadata["category"],
             "audience" => $this->metadata["audience"],
             "grades" => collect($this->metadata["grades"])->join(","),

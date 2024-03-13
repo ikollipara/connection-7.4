@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Contracts\Commentable;
 use App\Contracts\Likable;
 use App\Contracts\Viewable;
+use App\Services\BodyExtractor;
 use App\Traits\HasComments;
 use App\Traits\HasLikes;
 use App\Traits\HasUuids;
@@ -24,7 +25,7 @@ use Laravel\Scout\Searchable;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\User $user
+ * @property-read \App\Models\User|null $user
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Comment> $comments
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Post> $posts
  */
@@ -60,7 +61,7 @@ class PostCollection extends Model implements Likable, Viewable, Commentable
     /**
      * The attributes that should be defaults.
      *
-     * @var array<string, string>
+     * @var array<string, mixed>
      */
     protected $attributes = [
         "metadata" => '{"category": "material", "audience": "Teachers"}',
@@ -129,6 +130,7 @@ class PostCollection extends Model implements Likable, Viewable, Commentable
         return [
             "id" => $this->id,
             "title" => $this->title,
+            "body" => BodyExtractor::extract($this->body),
             "category" => $this->metadata["category"],
             "audience" => $this->metadata["audience"],
             "grades" => collect($this->metadata["grades"])->join(","),
