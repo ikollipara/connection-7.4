@@ -36,6 +36,8 @@ use Illuminate\Support\Str;
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property bool $sent_week_one_survey
+ * @property \Illuminate\Support\Carbon|null $yearly_survey_sent_at
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Comment> $comments
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\PostCollection> $postCollections
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Post> $posts
@@ -85,6 +87,10 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
         "grades" => "array",
         "no_comment_notifications" => "boolean",
         "password" => Hashed::class,
+        "consented" => "boolean",
+        "is_preservice" => "boolean",
+        "sent_week_one_survey" => "boolean",
+        "yearly_survey_sent_at" => "datetime",
     ];
 
     /** @var array<string, mixed> */
